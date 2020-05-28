@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="description" content="代码整洁之道（2）：函数"/><meta name="keywords" content="读书笔记, 代码整洁之道, 软件工程, 0x01" /><meta name="google-site-verification" content="1XE4HjcRwxfqFivnUCvu3UNFTTG4dg7dvjgCPwcrxGg" /><link rel="alternate" href="/atom.xml" title="0x01"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.11.0" />
+<link rel="canonical" href="https://0x01.io/2015/08/24/代码整洁之道（2）：函数/"/>
+
+<link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css" />
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.11.0" />
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-74494566-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-74494566-1');
+</script><script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+<script>
+  window.config = {"leancloud":{"app_id":null,"app_key":null},"toc":true,"fancybox":true,"pjax":"","latex":false};
+</script>
+
+    <title>代码整洁之道（2）：函数 - 0x01</title>
+  <meta name="generator" content="Hexo 4.2.0"><link rel="alternate" href="/atom.xml" title="0x01" type="application/atom+xml">
+</head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">0x01</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list"><a href="/">
+        <li class="mobile-menu-item">首页
+          </li>
+      </a><a href="/archives/">
+        <li class="mobile-menu-item">归档
+          </li>
+      </a></ul>
+</nav>
+<div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">0x01</a>
+</div>
+
+<nav class="site-navbar"><ul id="menu" class="menu"><li class="menu-item">
+          <a class="menu-item-link" href="/">
+            首页
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            归档
+            </a>
+        </li>
+      </ul></nav>
+</header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content"><article class="post">
+    <header class="post-header">
+      <h1 class="post-title">代码整洁之道（2）：函数
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2015-08-24
+        </span></div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#短小"><span class="toc-text">短小</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#只做一件事"><span class="toc-text">只做一件事</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#每个函数一个抽象层级"><span class="toc-text">每个函数一个抽象层级</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Switch-语句"><span class="toc-text">Switch 语句</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用描述性的名称"><span class="toc-text">使用描述性的名称</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#函数参数"><span class="toc-text">函数参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#无副作用"><span class="toc-text">无副作用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#分隔指令与询问"><span class="toc-text">分隔指令与询问</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用异常替代返回错误码"><span class="toc-text">使用异常替代返回错误码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#别重复自己"><span class="toc-text">别重复自己</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#结构化编程"><span class="toc-text">结构化编程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#如何写出如上所说的函数"><span class="toc-text">如何写出如上所说的函数</span></a></li></ol>
+    </div>
+  </div><div class="post-content"><h3 id="短小"><a href="#短小" class="headerlink" title="短小"></a>短小</h3><p>函数要短小，不超过20行。三四行说清楚最佳。</p>
+<p>if 语句、else 语句、while 语句等，其中代码块应该只有一行，就是个函数调用。</p>
+<h3 id="只做一件事"><a href="#只做一件事" class="headerlink" title="只做一件事"></a>只做一件事</h3><p>函数应该只做一件事。做好这件事。只做这一件事。</p>
+<h3 id="每个函数一个抽象层级"><a href="#每个函数一个抽象层级" class="headerlink" title="每个函数一个抽象层级"></a>每个函数一个抽象层级</h3><p>函数的语句都在同一个抽象层级上。</p>
+<h3 id="Switch-语句"><a href="#Switch-语句" class="headerlink" title="Switch 语句"></a>Switch 语句</h3><p>难免会遇到 Switch 语句，让其只做一件事比较困难。</p>
+<p>如果要出现，出现在抽象工厂模式底下，用于创建多态对象。</p>
+<p>当然要就事论事，偶尔会破坏这条规则。</p>
+<h3 id="使用描述性的名称"><a href="#使用描述性的名称" class="headerlink" title="使用描述性的名称"></a>使用描述性的名称</h3><p>取个好名字。</p>
+<p>函数越短小、功能越集中，就越便于取个好名字。</p>
+<p>别害怕长名称。长而具有描述性的名称，要比短而令人费解的名称好。长而具有描述性的名称，要比描述性的长注释好。</p>
+<p>选择描述性的名称能理清你关于模块的设计思路。</p>
+<p>命名要保持一致。</p>
+<h3 id="函数参数"><a href="#函数参数" class="headerlink" title="函数参数"></a>函数参数</h3><p>参数要少。尽量避免三个以上的参数。</p>
+<p>惯于通过参数输入数据，通过返回值输出。避免输出参数。</p>
+<p>避免向函数传入布尔值。宁愿分成两个函数。</p>
+<p>如果函数需要两个、三个或者三个以上的参数，说明其中的一些很有可能需要封装成类了。</p>
+<h3 id="无副作用"><a href="#无副作用" class="headerlink" title="无副作用"></a>无副作用</h3><h3 id="分隔指令与询问"><a href="#分隔指令与询问" class="headerlink" title="分隔指令与询问"></a>分隔指令与询问</h3><p>函数要么做什么事情，要么回答什么事。函数应该修改某对象的状态，或者返回该对象的有关信息。不要二者同时做。</p>
+<h3 id="使用异常替代返回错误码"><a href="#使用异常替代返回错误码" class="headerlink" title="使用异常替代返回错误码"></a>使用异常替代返回错误码</h3><p>ps: Golang 表示不服。</p>
+<p>抽离 Try/Catch 的代码块，另外形成一个函数。</p>
+<h3 id="别重复自己"><a href="#别重复自己" class="headerlink" title="别重复自己"></a>别重复自己</h3><h3 id="结构化编程"><a href="#结构化编程" class="headerlink" title="结构化编程"></a>结构化编程</h3><p>每个函数、函数中的每个代码块都应该只有一个入口、一个出口。</p>
+<p>但是对于小函数意义不大。只要函数保持短小，偶尔的 return、break 或者 continue 没有坏处。</p>
+<p>避免 goto。</p>
+<h3 id="如何写出如上所说的函数"><a href="#如何写出如上所说的函数" class="headerlink" title="如何写出如上所说的函数"></a>如何写出如上所说的函数</h3><p>先想写什么就写什么，然后再去打磨。</p>
+<p>并不认为一开始就按照规则写函数，没人做的到。</p>
+
+      </div>
+      
+      <footer class="post-footer">
+        <div class="post-tags">
+            <a href="/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">读书笔记</a>
+            <a href="/tags/%E4%BB%A3%E7%A0%81%E6%95%B4%E6%B4%81%E4%B9%8B%E9%81%93/">代码整洁之道</a>
+            <a href="/tags/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/">软件工程</a>
+            </div>
+        
+        <nav class="post-nav"><a class="prev" href="/2015/08/25/%E7%BD%91%E7%AB%99%E6%B7%BB%E5%8A%A0HTTPS%E6%94%AF%E6%8C%81/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">网站添加HTTPS支持</span>
+        <span class="prev-text nav-mobile">上一篇</span>
+      </a>
+    <a class="next" href="/2015/08/22/%E4%BB%A3%E7%A0%81%E6%95%B4%E6%B4%81%E4%B9%8B%E9%81%93%EF%BC%881%EF%BC%89%EF%BC%9A%E6%9C%89%E6%84%8F%E4%B9%89%E7%9A%84%E5%91%BD%E5%90%8D/">
+        <span class="next-text nav-default">代码整洁之道（1）：有意义的命名</span>
+        <span class="prev-text nav-mobile">下一篇</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    </nav></footer>
+    </article></div><div class="comments" id="comments"><div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript" target="_blank" rel="noopener">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div></div>
+      </main>
+
+      <footer id="footer" class="footer"><div class="social-links"><a href="mailto:maemual@gmail.com" class="iconfont icon-email" title="email"></a>
+        <a href="https://twitter.com/maemual" target="_blank" rel="noopener" class="iconfont icon-twitter" title="twitter"></a>
+        <a href="https://github.com/maemual" target="_blank" rel="noopener" class="iconfont icon-github" title="github"></a>
+        <a href="https://www.zhihu.com/people/maemual" target="_blank" rel="noopener" class="iconfont icon-zhihu" title="zhihu"></a>
+        <a href="https://www.douban.com/people/maemual/" target="_blank" rel="noopener" class="iconfont icon-douban" title="douban"></a>
+        <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    </div><div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even" target="_blank" rel="noopener">Even</a>
+  </span>
+
+  <span class="copyright-year">&copy;2014 - 2020<span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">maemual</span>
+  </span>
+</div>
+</footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div><script type="text/javascript">
+    var disqus_config = function () {
+        this.page.url = 'https://0x01.io/2015/08/24/%E4%BB%A3%E7%A0%81%E6%95%B4%E6%B4%81%E4%B9%8B%E9%81%93%EF%BC%882%EF%BC%89%EF%BC%9A%E5%87%BD%E6%95%B0/';
+        this.page.identifier = '2015/08/24/代码整洁之道（2）：函数/';
+        this.page.title = '代码整洁之道（2）：函数';
+    };
+    (function() {
+    var d = document, s = d.createElement('script');
+
+    s.src = '//0x01-io.disqus.com/embed.js';
+
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();  
+  </script><script type="text/javascript" src="/lib/jquery/jquery.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/src/even.js?v=2.11.0"></script>
+</body>
+</html>

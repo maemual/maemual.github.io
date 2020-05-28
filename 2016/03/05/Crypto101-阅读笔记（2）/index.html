@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="description" content="Crypto101 阅读笔记（2）"/><meta name="keywords" content="Crypto, 现代密码学, 阅读笔记, stream cipher, 0x01" /><meta name="google-site-verification" content="1XE4HjcRwxfqFivnUCvu3UNFTTG4dg7dvjgCPwcrxGg" /><link rel="alternate" href="/atom.xml" title="0x01"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.11.0" />
+<link rel="canonical" href="https://0x01.io/2016/03/05/Crypto101-阅读笔记（2）/"/>
+
+<link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css" />
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.11.0" />
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-74494566-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-74494566-1');
+</script><script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+<script>
+  window.config = {"leancloud":{"app_id":null,"app_key":null},"toc":true,"fancybox":true,"pjax":"","latex":false};
+</script>
+
+    <title>Crypto101 阅读笔记（2） - 0x01</title>
+  <meta name="generator" content="Hexo 4.2.0"><link rel="alternate" href="/atom.xml" title="0x01" type="application/atom+xml">
+</head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">0x01</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list"><a href="/">
+        <li class="mobile-menu-item">首页
+          </li>
+      </a><a href="/archives/">
+        <li class="mobile-menu-item">归档
+          </li>
+      </a></ul>
+</nav>
+<div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">0x01</a>
+</div>
+
+<nav class="site-navbar"><ul id="menu" class="menu"><li class="menu-item">
+          <a class="menu-item-link" href="/">
+            首页
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            归档
+            </a>
+        </li>
+      </ul></nav>
+</header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content"><article class="post">
+    <header class="post-header">
+      <h1 class="post-title">Crypto101 阅读笔记（2）
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2016-03-05
+        </span></div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#流加密"><span class="toc-text">流加密</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ECB-模式"><span class="toc-text">ECB 模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CBC-模式"><span class="toc-text">CBC 模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CBC-模式下基于可预测-IV-的攻击"><span class="toc-text">CBC 模式下基于可预测 IV 的攻击</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CBC-模式下把-key-用作-IV-的攻击"><span class="toc-text">CBC 模式下把 key 用作 IV 的攻击</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Padding"><span class="toc-text">Padding</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CBC-Padding-attack"><span class="toc-text">CBC Padding attack</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RC4"><span class="toc-text">RC4</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Salsa20"><span class="toc-text">Salsa20</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CTR-模式"><span class="toc-text">CTR 模式</span></a></li></ol></li></ol>
+    </div>
+  </div><div class="post-content"><h2 id="流加密"><a href="#流加密" class="headerlink" title="流加密"></a>流加密</h2><p>流加密（Stream Cipher）是对称密钥加密算法的一种，用来加密比特流。</p>
+<p>流加密算法有两种，一种是利用块加密算法，利用某种工作模式，加密比特流；另一种从设计就是为了比特流考虑的算法。</p>
+<h3 id="ECB-模式"><a href="#ECB-模式" class="headerlink" title="ECB 模式"></a>ECB 模式</h3><p>利用前一篇里面的块加密算法，很容易构想出一个原始简单的流加密算法。就是把比特流分割成一个个的具有块大小的数据块，然后对每一块分别使用块加密算法进行加密。</p>
+<p>这种方式叫做 ECB（Electronic Code Book mode） 模式。这种加密模式最大的问题是相同的原明文块会被转变成相同的加密块。</p>
+<h3 id="CBC-模式"><a href="#CBC-模式" class="headerlink" title="CBC 模式"></a>CBC 模式</h3><p>CBC 模式，Cipher Block Chining。CBC 模式就是明文数据块在加密之前会和前一个加密过得到的密文块进行异或运算。这个模式的问题是第一个明文块，没有前一个加密块。所以要引入一个 IV（Initialization Vector），初始化向量作为最初的加密块使用。IV 必须随机，不可预测，但没必要加密，重要的是不可预测。</p>
+<p><img src="https://dn-0x01-io.qbox.me/CBC_encryption.png" alt="CBC_encryption"></p>
+<p><img src="https://dn-0x01-io.qbox.me/CBC_decryption.png" alt="CBC_decryption.png"></p>
+<p>与 CBC 模式很相似的模式还有 CFB 和 OFB 模式。</p>
+<h3 id="CBC-模式下基于可预测-IV-的攻击"><a href="#CBC-模式下基于可预测-IV-的攻击" class="headerlink" title="CBC 模式下基于可预测 IV 的攻击"></a>CBC 模式下基于可预测 IV 的攻击</h3><p>在 AES 系统中，IV 通常都是可以从密文 C 中读到的。</p>
+<p>一种常用的 AESCipher 的 Python 实现如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"><span class="keyword">from</span> Crypto.Cipher <span class="keyword">import</span> AES</span><br><span class="line"><span class="keyword">from</span> Crypto <span class="keyword">import</span> Random</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">AESCipher</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">( self, key )</span>:</span></span><br><span class="line">        self.key = key</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">encrypt</span><span class="params">( self, raw )</span>:</span></span><br><span class="line">        raw = pad(raw)</span><br><span class="line">        iv = Random.new().read( AES.block_size )</span><br><span class="line">        cipher = AES.new( self.key, AES.MODE_CBC, iv )</span><br><span class="line">        <span class="keyword">return</span> base64.b64encode( iv + cipher.encrypt( raw ) ) </span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">decrypt</span><span class="params">( self, enc )</span>:</span></span><br><span class="line">        enc = base64.b64decode(enc)</span><br><span class="line">        iv = enc[:<span class="number">16</span>]</span><br><span class="line">        cipher = AES.new(self.key, AES.MODE_CBC, iv )</span><br><span class="line">        <span class="keyword">return</span> unpad(cipher.decrypt( enc[<span class="number">16</span>:] ))</span><br></pre></td></tr></table></figure>
+
+<p>其中 IV 都是可以直接知道的。但是 IV 可知并不是什么问题，主要的问题是，IV 要不可被预知。</p>
+<p>假设某条加密过的数据 $C_1$ 的 IV 是 $IV_a$ 可知，针对我们即将输入进去的数据的 IV 我们可预知，即 $IV_m$，我们可构造明文数据 $P_m = IV_m \oplus IV_a \oplus G$，其中，G 是我们猜测的 C1 的原文。</p>
+<p>然后由 </p>
+<p>$$<br>C_m = E(k, IV_m \oplus P_m) \<br>= E(k, IV_m \oplus(IV_m \oplus IV_a \oplus G)) \<br>= E(k, IV_a \oplus G)<br>$$</p>
+<p>这里通过比较 $C_m$ 和 $C_1$，可以验证对于 $C_1$ 猜测的原文 G 是否正确。</p>
+<h3 id="CBC-模式下把-key-用作-IV-的攻击"><a href="#CBC-模式下把-key-用作-IV-的攻击" class="headerlink" title="CBC 模式下把 key 用作 IV 的攻击"></a>CBC 模式下把 key 用作 IV 的攻击</h3><p>把 key 用作 IV 是不安全的。</p>
+<p>假设 Alice 的明文 P 包含三个 block，分别为 $P_1 P_2 P_3$，在 CBC 模式下用 key 加密，并且 IV 也是 key。得到的密文 C 为 $C_1 C_2 C_3$ 发送给了 Bob。</p>
+<p>在 Bob 接收到密文之前，Mallory 截获了密文。然后把密文篡改成 $C^{‘} = C_1ZC_1$，其中 Z 是全 0 的一个块。当 Bob 接收到被篡改过的密文并解密 $C^{‘}$ 之后，得到三个明文串 $P^{‘}_1$、$P^{‘}_2$ 和 $P^{‘}_3$。</p>
+<p>$$P^{‘}_1 = D(k, C_1) \oplus IV = D(k, C_1) \oplus k = P_1 $$</p>
+<p>$$P^{‘}_2 = D(k, Z) \oplus C_1 = R$$</p>
+<p>$$P^{‘}_3 = D(k, C_1) \oplus Z = D(k, C_1) = P_1 \oplus IV$$</p>
+<p>其中 R 是一个无所谓的串。</p>
+<p>到此，Mallory 在得知 $P^{‘}_1$、$P^{‘}_2$ 和 $P^{‘}_3$ 的情况下，就可以推算出 IV，由于 key 就是 IV，所以就推算出了 key。</p>
+<p>到这里我有个疑惑，Mallory 是怎么得知 $P^{‘}_1$、$P^{‘}_2$ 和 $P^{‘}_3$。然后发现书中这样的一句话 “Under the chosen-ciphertext attack assumption”。这句话的意思是，攻击者可以通过给定某一个特定的密文 C 给解密者并且获得对应解密后的明文结果。通常是利用解密端软件的某些 bug 或者漏洞。所以这里 Mallory 是可以拿到对应的 $P^{‘}_1$、$P^{‘}_2$ 和 $P^{‘}_3$ 的。所以说，这种漏洞的利用还是比较难的。</p>
+<h3 id="Padding"><a href="#Padding" class="headerlink" title="Padding"></a>Padding</h3><p>Padding 就是填充的意思。</p>
+<p>在 CBC 模式下，假设了每个加密块都是块加密算法的 block size 大小。但事实上，真正的数据流的长度是不定的。那么对于最后一块数据，长度不足一个 block 时候，就需要在末尾填充一些其他数据来满足长度要求。这个就是 Padding。</p>
+<p>最简单的思维是，填充某个固定的字节，例如 0。问题是，无法区分填充字节和原来的数据。</p>
+<p>更好，更常用的方法是 PKCS#5/PKCS#7。基本思想是，对于后面少几个字节，就把几全部填充进去。例如一个 8 个字节的 block，原始数据是 12 34 45，差 5 个字节。那么就填充成 12 34 45 05 05 05 05 05。当某个数据刚好是 block 的整数倍，不需要填充时，则在最后面填充一整个 block。</p>
+<h3 id="CBC-Padding-attack"><a href="#CBC-Padding-attack" class="headerlink" title="CBC Padding attack"></a>CBC Padding attack</h3><p>使用 Padding attack 只需要两点，一段需要解密的密文 $C_i$，和一个可以响应 Padding 是否合法的目标程序。这里假设填充方法是上面说的 PKCS#5/PKCS#7。</p>
+<p>首先攻击者构造一个随机串 $R = r_1,r_2,r_3…r_b$。然后，攻击者不停的尝试随机串 $R$ 的最后一个字符 $r_b$，目的是得到一个填充合法的结果。最差的情况是使得最后的明文串 $P_i$ 的最后一位 $P_b$ 是 01。根据上述 PKCS 的填充原理，01 必然是一个合法的填充结果。</p>
+<p><img src="https://dn-0x01-io.qbox.me/CBC_Padding_attack.png" alt="CBC_Padding_attack.png"></p>
+<p>这时我们得到填充合法的结果，我们有此时的随机串 $R$。但是并不知道填充的位数。但是可以知道的是，$P_i$ 的末尾必然是 </p>
+<ul>
+<li>$01$</li>
+<li>$02\ 02$</li>
+<li>$03\ 03\ 03$</li>
+<li>… 这些情况。</li>
+</ul>
+<p>当然，从概率上而言，结尾是 $01$ 的可能性最大。</p>
+<p>这里，我们假设最后的明文 $P_i = p_0p_1p_2p_3p_4030303$，其中 $p_0p_1p_2p_3p_4$ 是什么并不会影响我们进行填充正确性的检验。</p>
+<p>所以我们从 $r_0$ 开始尝试变动，这样会导致最后的 $P_i = p^{‘}_0p_1p_2p_3p_4030303$。但是这样并不会影响我们进行填充正确性的检验。所以我们可以继续变动下一位 $r_1$，这样一直下去，直到填充正确性检验失败，我们就可以知道有多少位的填充 padding。从实际工作角度，我们或许没必要猜测是几位。我们就假定末尾是 01。当填充正确性检验通过的时候，我们不知道最后实际是几位，但是我们只需要变动一下倒数第二位，一旦校验失败，则说明 Padding 一定不是 01，这时我们不管他，继续尝试 $r_0$，直到能说明 Pading 是 01 为止。</p>
+<p>接下来，我们假设最后的填充是 $01$，这是最坏的情况。</p>
+<p>那么就有 $D(C_i)[b] \oplus r_b = 01$，这样我们可以计算出 $D(C_i)[b]$，即$C_i$被算法 D 解密之后的中间结果的最后一位。要注意这个中间结果，我们做这么多，目的就是这个中间结果，这个中间结果是不会变动的。</p>
+<p>接下来我们去尝试倒数第二位。首先，根据上面的等式，我们可以推出 $D(C_i)[b] \oplus r_b  \oplus 01 \oplus 02 = 01 \oplus 01 \oplus 02 = 02$，也就是让 $r_b = r_b  \oplus 01 \oplus 02$，这时最后的填充位就变成了 02，这样，我们去暴力尝试 R 的倒数第二位，使得最后填充检验通过。这时，我们就可以得到$D(C_i)[b-1]$，也就是这个中间结果的倒数第二位。不断重复这个过程，我们可以得到整个中间结果串 $D(C_i)$。</p>
+<p>这时，我们拿出密文 $C_i$ 的前一个密文串 $C_{i-1}$，根据 CBC 的工作模式，这里 $C_{i-1} \oplus C_i = P_i$。就这样，我们得到了解密后的结果 $P_i$。然后重复整个过程，我们可以解出所有的明文，除了第一块，因为我们不知道 IV。</p>
+<h3 id="RC4"><a href="#RC4" class="headerlink" title="RC4"></a>RC4</h3><p>RC4，十分简单，但是已经被攻破。而且很快，13.9 cycles/bit。AES-128 CTR 模式是 12.6 cycles/bit，CBC 模式是 16 cycles/bit。</p>
+<h3 id="Salsa20"><a href="#Salsa20" class="headerlink" title="Salsa20"></a>Salsa20</h3><p>Salsa20 是一种新的流加密算法。目前有两个版本，Salsa20/12 和 Salsa20/8。其中 12 和 8 表示循环次数，从原始的 20 降下来。与 Salsa20 相似的还有 ChaCha。</p>
+<p>Salsa20 和 ChaCha 都非常快。</p>
+<p>Salsa20 有个特点就是可以从任意一段进行加密解密。意味着算法可以并行。</p>
+<h3 id="CTR-模式"><a href="#CTR-模式" class="headerlink" title="CTR 模式"></a>CTR 模式</h3><p>CTR 模式，也叫 counter 模式。</p>
+<p>工作流程很简单，一个初始化的随机数 N，然后 N 和一个计数器连起来。和 key 加密后产生 key stream 再和明文 P 异或产生密文 C。每加密一块后计数器就加一。循环往复。</p>
+<p><img src="https://dn-0x01-io.qbox.me/CTR_encryption.png" alt="CTR_encryption.png"></p>
+<p><img src="https://dn-0x01-io.qbox.me/CTR_decryption.png" alt="CTR_decryption.png"></p>
+<p>和 Salsa20 一样，可以从任意一段开始，也就是可以并行。</p>
+
+      </div>
+      
+      <footer class="post-footer">
+        <div class="post-tags">
+            <a href="/tags/Crypto/">Crypto</a>
+            <a href="/tags/%E7%8E%B0%E4%BB%A3%E5%AF%86%E7%A0%81%E5%AD%A6/">现代密码学</a>
+            <a href="/tags/%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/">阅读笔记</a>
+            <a href="/tags/stream-cipher/">stream cipher</a>
+            </div>
+        
+        <nav class="post-nav"><a class="prev" href="/2016/03/05/Crypto101-%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0%EF%BC%883%EF%BC%89/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">Crypto101 阅读笔记（3）</span>
+        <span class="prev-text nav-mobile">上一篇</span>
+      </a>
+    <a class="next" href="/2016/03/04/Crypto101-%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0%EF%BC%881%EF%BC%89/">
+        <span class="next-text nav-default">Crypto101 阅读笔记（1）</span>
+        <span class="prev-text nav-mobile">下一篇</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    </nav></footer>
+    </article></div><div class="comments" id="comments"><div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript" target="_blank" rel="noopener">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div></div>
+      </main>
+
+      <footer id="footer" class="footer"><div class="social-links"><a href="mailto:maemual@gmail.com" class="iconfont icon-email" title="email"></a>
+        <a href="https://twitter.com/maemual" target="_blank" rel="noopener" class="iconfont icon-twitter" title="twitter"></a>
+        <a href="https://github.com/maemual" target="_blank" rel="noopener" class="iconfont icon-github" title="github"></a>
+        <a href="https://www.zhihu.com/people/maemual" target="_blank" rel="noopener" class="iconfont icon-zhihu" title="zhihu"></a>
+        <a href="https://www.douban.com/people/maemual/" target="_blank" rel="noopener" class="iconfont icon-douban" title="douban"></a>
+        <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    </div><div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even" target="_blank" rel="noopener">Even</a>
+  </span>
+
+  <span class="copyright-year">&copy;2014 - 2020<span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">maemual</span>
+  </span>
+</div>
+</footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div><script type="text/javascript">
+    var disqus_config = function () {
+        this.page.url = 'https://0x01.io/2016/03/05/Crypto101-%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0%EF%BC%882%EF%BC%89/';
+        this.page.identifier = '2016/03/05/Crypto101-阅读笔记（2）/';
+        this.page.title = 'Crypto101 阅读笔记（2）';
+    };
+    (function() {
+    var d = document, s = d.createElement('script');
+
+    s.src = '//0x01-io.disqus.com/embed.js';
+
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();  
+  </script><script type="text/javascript" src="/lib/jquery/jquery.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/src/even.js?v=2.11.0"></script>
+</body>
+</html>

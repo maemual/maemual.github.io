@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="description" content="源码阅读笔记：Python标准库SocketServer"/><meta name="keywords" content="Python, 0x01" /><meta name="google-site-verification" content="1XE4HjcRwxfqFivnUCvu3UNFTTG4dg7dvjgCPwcrxGg" /><link rel="alternate" href="/atom.xml" title="0x01"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.11.0" />
+<link rel="canonical" href="https://0x01.io/2014/10/14/源码阅读笔记：Python标准库SocketServer/"/>
+
+<link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css" />
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.11.0" />
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-74494566-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-74494566-1');
+</script><script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+<script>
+  window.config = {"leancloud":{"app_id":null,"app_key":null},"toc":true,"fancybox":true,"pjax":"","latex":false};
+</script>
+
+    <title>源码阅读笔记：Python标准库SocketServer - 0x01</title>
+  <meta name="generator" content="Hexo 4.2.0"><link rel="alternate" href="/atom.xml" title="0x01" type="application/atom+xml">
+</head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">0x01</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list"><a href="/">
+        <li class="mobile-menu-item">首页
+          </li>
+      </a><a href="/archives/">
+        <li class="mobile-menu-item">归档
+          </li>
+      </a></ul>
+</nav>
+<div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">0x01</a>
+</div>
+
+<nav class="site-navbar"><ul id="menu" class="menu"><li class="menu-item">
+          <a class="menu-item-link" href="/">
+            首页
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            归档
+            </a>
+        </li>
+      </ul></nav>
+</header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content"><article class="post">
+    <header class="post-header">
+      <h1 class="post-title">源码阅读笔记：Python标准库SocketServer
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2014-10-14
+        </span></div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#简介"><span class="toc-text">简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基本socket编程"><span class="toc-text">基本socket编程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基于SocketServer编程"><span class="toc-text">基于SocketServer编程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SocketServer源码结构"><span class="toc-text">SocketServer源码结构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#RequestHandler"><span class="toc-text">RequestHandler</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#源码分析"><span class="toc-text">源码分析</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Server"><span class="toc-text">Server</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MixIn"><span class="toc-text">MixIn</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#其他"><span class="toc-text">其他</span></a></li></ol></li></ol>
+    </div>
+  </div><div class="post-content"><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p><code>SocketServer</code>是对底层的<code>Socket</code>进行封装，简化网络服务器编写工作的Python标准库。</p>
+<p>源码地址：<a href="http://hg.python.org/cpython/file/2.7/Lib/SocketServer.py" target="_blank" rel="noopener">Lib/SocketServer.py</a></p>
+<p>文档地址：<a href="https://docs.python.org/2/library/socketserver.html" target="_blank" rel="noopener">20.17. SocketServer — A framework for network servers</a></p>
+<h2 id="基本socket编程"><a href="#基本socket编程" class="headerlink" title="基本socket编程"></a>基本socket编程</h2><p>我们假设读者对socket编程已经有了基本的了解，否则请阅读<a href="https://docs.python.org/2/library/socket.html" target="_blank" rel="noopener">官方文档</a></p>
+<a id="more"></a>
+
+<p>以TCP为例，基本的socket编程，server端的流程如下：</p>
+<ol>
+<li>创建一个socket</li>
+<li>bind绑定地址和端口</li>
+<li>listen端口监听</li>
+<li>accept接受连接</li>
+<li>然后通过recv和send来接收、发送数据</li>
+<li>close关闭连接</li>
+</ol>
+<p>client端流程如下：</p>
+<ol>
+<li>创建socket</li>
+<li>connect与服务端建立连接</li>
+<li>连接建立后即可通过recv和send交互数据</li>
+<li>close关闭连接</li>
+</ol>
+<p>server端：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Echo server program</span></span><br><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"></span><br><span class="line">HOST = <span class="string">''</span>                 <span class="comment"># Symbolic name meaning all available interfaces</span></span><br><span class="line">PORT = <span class="number">50007</span>              <span class="comment"># Arbitrary non-privileged port</span></span><br><span class="line">s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)</span><br><span class="line">s.bind((HOST, PORT))</span><br><span class="line">s.listen(<span class="number">1</span>)</span><br><span class="line">conn, addr = s.accept()</span><br><span class="line"><span class="keyword">print</span> <span class="string">'Connected by'</span>, addr</span><br><span class="line"><span class="keyword">while</span> <span class="number">1</span>:</span><br><span class="line">    data = conn.recv(<span class="number">1024</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> data: <span class="keyword">break</span></span><br><span class="line">    conn.sendall(data)</span><br><span class="line">conn.close()</span><br></pre></td></tr></table></figure>
+
+<p>client端：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Echo client program</span></span><br><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"></span><br><span class="line">HOST = <span class="string">'daring.cwi.nl'</span>    <span class="comment"># The remote host</span></span><br><span class="line">PORT = <span class="number">50007</span>              <span class="comment"># The same port as used by the server</span></span><br><span class="line">s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)</span><br><span class="line">s.connect((HOST, PORT))</span><br><span class="line">s.sendall(<span class="string">'Hello, world'</span>)</span><br><span class="line">data = s.recv(<span class="number">1024</span>)</span><br><span class="line">s.close()</span><br><span class="line"><span class="keyword">print</span> <span class="string">'Received'</span>, repr(data)</span><br></pre></td></tr></table></figure>
+
+<p>从上面的例子看出，直接使用socket编程的话，需要处理比较多的细节，并且扩展性不够好。</p>
+<h2 id="基于SocketServer编程"><a href="#基于SocketServer编程" class="headerlink" title="基于SocketServer编程"></a>基于SocketServer编程</h2><p>同样以TCP为例，server端代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> SocketServer</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyTCPHandler</span><span class="params">(SocketServer.StreamRequestHandler)</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">handle</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="comment"># self.rfile is a file-like object created by the handler;</span></span><br><span class="line">        <span class="comment"># we can now use e.g. readline() instead of raw recv() calls</span></span><br><span class="line">        self.data = self.rfile.readline().strip()</span><br><span class="line">        <span class="keyword">print</span> <span class="string">"&#123;&#125; wrote:"</span>.format(self.client_address[<span class="number">0</span>])</span><br><span class="line">        <span class="keyword">print</span> self.data</span><br><span class="line">        <span class="comment"># Likewise, self.wfile is a file-like object used to write back</span></span><br><span class="line">        <span class="comment"># to the client</span></span><br><span class="line">        self.wfile.write(self.data.upper())</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    HOST, PORT = <span class="string">"localhost"</span>, <span class="number">9999</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># Create the server, binding to localhost on port 9999</span></span><br><span class="line">    server = SocketServer.TCPServer((HOST, PORT), MyTCPHandler)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Activate the server; this will keep running until you</span></span><br><span class="line">    <span class="comment"># interrupt the program with Ctrl-C</span></span><br><span class="line">    server.serve_forever()</span><br></pre></td></tr></table></figure>
+<p>从上面看出，利用SocketServer，有关于socket连接的细节都由其处理，我们只需要构造一个继承自<code>StreamRequestHandler</code>的类，override掉<code>handle</code>方法，我们更加专心于业务逻辑处理。</p>
+<h2 id="SocketServer源码结构"><a href="#SocketServer源码结构" class="headerlink" title="SocketServer源码结构"></a>SocketServer源码结构</h2><p><code>SocketServer.py</code>文件中包含<code>Server</code>和<code>RequestHandler</code>两大类的class。</p>
+<h3 id="RequestHandler"><a href="#RequestHandler" class="headerlink" title="RequestHandler"></a>RequestHandler</h3><p><code>RequestHandler</code>比较简单，<code>StreamRequestHandler</code>（TCP）和<code>DatagramRequestHandler</code>（UDP）都继承自<code>BaseRequestHandler</code>。</p>
+<p><code>RequestHandler</code>只有四个方法：</p>
+<ol>
+<li><code>__init__</code>，初始化</li>
+<li><code>setup</code>，构造一些协议相关的东西，比如用于读写的file</li>
+<li><code>handle</code>，用于给用户override的方法，用于编写业务逻辑的地方</li>
+<li><code>finish</code>，一些扫尾工作，如用于读写文件的关闭</li>
+</ol>
+<h4 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h4><p>RequestHandler部分的源码比较简单，我们就用处理TCP连接的<code>StreamRequestHandler</code>为例来讲解，UDP的Handler和TCP大同小异，并且更加简单一些。</p>
+<p>从671行开始看起，先定义了的<code>rbufsize</code>和<code>wbufsize</code>分别表示读缓冲区大小和写缓冲区大小。其中<code>disable_nagle_algorithm</code>是用来控制是否启用<code>nagle</code>算法。<code>nagle</code>算法是为了解决网络中小数据传输的带宽浪费问题的。在TCP/IP协议中，哪怕只传输1个字节的数据，但只要是一个数据段，就要加上几十个字节的协议头，所以在传输小数据的时候，造成了大量的浪费。<code>nagle</code>算法的基本思想就是将数据进行缓存，当达到一定的大小时，再统一发送，这样可以大大提高网络利用率。但是提高网络利用率的同时，网络的实时性就降低了。对于某些交互性很强的应用程序来说是不允许的。默认情况下是启用了这个算法的。</p>
+<p>在693行，<code>setup</code>方法中，赋的第一个变量<code>self.connection</code>表示用来交互的<code>socket</code>对象。它的值是从<code>self.request</code>给出来的。我们来追踪一下这个<code>self.request</code>。首先追踪到644行，在<code>BaseRequestHandler</code>的<code>__init__</code>方法中，<code>self.request</code>是从类构造的参数<code>request</code>传进来的。那么我们就找这个类使用的地方。</p>
+<p>从上面的示例代码可以看出，我们的<code>RequestHandler</code>是作为参数传进<code>Server</code>里面的，所以我们追到209行，看出来赋值给了<code>Server</code>的<code>self.RequestHanlerClass</code>，再看哪儿使用了这个变量，追到334行，在<code>finish_request</code>里传了那个<code>request</code>进来，并构造了一个<code>RequestHandler</code>的实例。那么这个<code>request</code>又是从321行的<code>process_request</code>传进来的，再追下去，传进来的<code>request</code>是在295行，这个值又是290行的<code>get_request</code>的返回值。<code>get_request</code>这个方法基类<code>BaseServer</code>没有定义，是由子类来实现的，我们到463行可以看出，<code>get_request</code>的返回值就是<code>socket.accept()</code>的返回值，即建立连接的<code>socket</code>对象。</p>
+<p>由此我们可以看出，在<code>SocketServer</code>中的<code>request</code>其本质就是<code>socket</code>对象。</p>
+<p><code>RequestHandler</code>接下来就没有什么好讲的了，都很简单。</p>
+<h3 id="Server"><a href="#Server" class="headerlink" title="Server"></a>Server</h3><p>从下图可以看出有关于<code>Server</code>部分的继承关系</p>
+<figure class="highlight pl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">+------------+</span><br><span class="line">| BaseServer |</span><br><span class="line">+------------+</span><br><span class="line">      |</span><br><span class="line">      v</span><br><span class="line">+-----------+        +------------------+</span><br><span class="line">| TCPServer |-------&gt;| UnixStreamServer |</span><br><span class="line">+-----------+        +------------------+</span><br><span class="line">      |</span><br><span class="line">      v</span><br><span class="line">+-----------+        +--------------------+</span><br><span class="line">| UDPServer |-------&gt;| UnixDatagramServer |</span><br><span class="line">+-----------+        +--------------------+</span><br></pre></td></tr></table></figure>
+<p>我们以<code>TCPServer</code>为例讲解。从221行的对外的入口<code>serve_forever()</code>开始。从230行可以看出，这是个由<code>self.__is_shutdown_request</code>变量控制的循环。与<code>self.__is_shutdown_request</code>相关的还有一个<code>threading.Event</code>对象<code>self.__is_shut_down</code>。</p>
+<p><code>threading.Event</code>对象是一种我理解上的信号，只有<code>True</code>和<code>False</code>两个值。有三个基本方法，<code>wait</code>、<code>set</code>、<code>clear</code>。<code>wait</code>就是阻塞等待直到其值为<code>True</code>，<code>set</code>方法就是将其赋值为<code>True</code>，而<code>clear</code>就是reset其值成<code>False</code>。在243行<code>shutdown</code>这另一个对外的方法，首先将<code>self.__is_shutdown_request</code>赋值为<code>True</code>之后，便<code>wait</code>等待结束。</p>
+<p><code>self.__is_shutdown_request</code>控制的就是230行的Server主循环。主循环里面就做了两件事情，一个是使用<code>select</code>来等待连接的到来，二个是到连接到来的时候，调用<code>self._handle_request_noblock</code>来处理这个连接。</p>
+<p>先说这个<code>select</code>是对操作系统下的<code>select</code>系统调用做的封装。<code>select</code>系统调用是是通过维护一个文件描述符数组，来监视等待IO的文件描述符。是一种跨平台性较好、比较简单的IO复用技术。但缺点很明显，由于能开的文件描述符数量在系统上是有限制的，并且随着数组的增大，其扫描一遍的时间增长，效率会大幅度的降低。代码235行调用的<code>select</code>外面包了一层方法，这个方法不需要太多了解，只是为了处理一个系统中断的。<code>select</code>的最后一个参数是<code>poll_interval</code>，默认值为0.5，也就是0.5秒，表示阻塞等待的时间为0.5秒。</p>
+<p>然后就是handle这个request了。处理流程就是<code>get_request</code>-&gt;<code>verify_request</code>-&gt;<code>process_request</code>，如果出现异常，则调用<code>handle_error</code>和<code>shutdown_request</code>。<code>get_request</code>我们上面也讲了，就是一个<code>socket.accept()</code>。<code>verify_request</code>在这里直接返回<code>True</code>，并且下面的两个子类也并没有修改这个方法，也就是为了抽象考虑，并留给用户来使用的。这个<code>process_request</code>中重点在<code>finish_requst</code>上，上面已经说了，这个里面就是调用<code>RequestHandler</code>的<code>handle</code>来进行逻辑处理。</p>
+<h3 id="MixIn"><a href="#MixIn" class="headerlink" title="MixIn"></a>MixIn</h3><p>源码中还有两个类，<code>ForkingMixIn</code>和<code>ThreadingMixIn</code>，两个混合类。对于混合类的解释，我显然是比不上赖勇浩大叔的，所以还是贴上他的文章吧——<a href="http://blog.csdn.net/gzlaiyonghao/article/details/1656969" target="_blank" rel="noopener">Mixin 扫盲班</a>。</p>
+<p>简单的来说，混合类就是用来给原本没有某种能力的类插入某个能力的东西。这两个类就是给我们本来只能处理单request的server类提供多request处理能力的类。一个是通过多进程，一个通过多线程来实现的。</p>
+<p>我们以<code>ThreadingMixIn</code>为例，其实本质上就是通过多继承的方式，把<code>MixIn</code>放在前面，根据Python多继承的一个方法的搜索顺序，由下至上，从左到右，把<code>MixIn</code>放在前面，重写<code>process_request</code>方法，然后通过开线程的方式来实现同时处理多request的。</p>
+<h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h3><p>其他的诸如<code>ThreadingTCPServer</code>，<code>UnixStreamServer</code>只不过是对上述的几个类的组合，继承，很简单，就不做过多的介绍了。</p>
+
+      </div>
+      
+      <footer class="post-footer">
+        <div class="post-tags">
+            <a href="/tags/Python/">Python</a>
+            </div>
+        
+        <nav class="post-nav"><a class="prev" href="/2014/10/18/Supervisor%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B%E6%8C%87%E5%8D%97/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">Supervisor快速上手指南</span>
+        <span class="prev-text nav-mobile">上一篇</span>
+      </a>
+    <a class="next" href="/2014/10/14/hello-world/">
+        <span class="next-text nav-default">Hello World</span>
+        <span class="prev-text nav-mobile">下一篇</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    </nav></footer>
+    </article></div><div class="comments" id="comments"><div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript" target="_blank" rel="noopener">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div></div>
+      </main>
+
+      <footer id="footer" class="footer"><div class="social-links"><a href="mailto:maemual@gmail.com" class="iconfont icon-email" title="email"></a>
+        <a href="https://twitter.com/maemual" target="_blank" rel="noopener" class="iconfont icon-twitter" title="twitter"></a>
+        <a href="https://github.com/maemual" target="_blank" rel="noopener" class="iconfont icon-github" title="github"></a>
+        <a href="https://www.zhihu.com/people/maemual" target="_blank" rel="noopener" class="iconfont icon-zhihu" title="zhihu"></a>
+        <a href="https://www.douban.com/people/maemual/" target="_blank" rel="noopener" class="iconfont icon-douban" title="douban"></a>
+        <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    </div><div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even" target="_blank" rel="noopener">Even</a>
+  </span>
+
+  <span class="copyright-year">&copy;2014 - 2020<span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">maemual</span>
+  </span>
+</div>
+</footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div><script type="text/javascript">
+    var disqus_config = function () {
+        this.page.url = 'https://0x01.io/2014/10/14/%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0%EF%BC%9APython%E6%A0%87%E5%87%86%E5%BA%93SocketServer/';
+        this.page.identifier = '2014/10/14/源码阅读笔记：Python标准库SocketServer/';
+        this.page.title = '源码阅读笔记：Python标准库SocketServer';
+    };
+    (function() {
+    var d = document, s = d.createElement('script');
+
+    s.src = '//0x01-io.disqus.com/embed.js';
+
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();  
+  </script><script type="text/javascript" src="/lib/jquery/jquery.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/src/even.js?v=2.11.0"></script>
+</body>
+</html>

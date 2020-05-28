@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="description" content="巧用Shadowsocks Replay"/><meta name="keywords" content="翻墙, Shadowsocks, 0x01" /><meta name="google-site-verification" content="1XE4HjcRwxfqFivnUCvu3UNFTTG4dg7dvjgCPwcrxGg" /><link rel="alternate" href="/atom.xml" title="0x01"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.11.0" />
+<link rel="canonical" href="https://0x01.io/2015/05/08/巧用Shadowsocks-Replay/"/>
+
+<link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css" />
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.11.0" />
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-74494566-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-74494566-1');
+</script><script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+<script>
+  window.config = {"leancloud":{"app_id":null,"app_key":null},"toc":true,"fancybox":true,"pjax":"","latex":false};
+</script>
+
+    <title>巧用Shadowsocks Replay - 0x01</title>
+  <meta name="generator" content="Hexo 4.2.0"><link rel="alternate" href="/atom.xml" title="0x01" type="application/atom+xml">
+</head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">0x01</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list"><a href="/">
+        <li class="mobile-menu-item">首页
+          </li>
+      </a><a href="/archives/">
+        <li class="mobile-menu-item">归档
+          </li>
+      </a></ul>
+</nav>
+<div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">0x01</a>
+</div>
+
+<nav class="site-navbar"><ul id="menu" class="menu"><li class="menu-item">
+          <a class="menu-item-link" href="/">
+            首页
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            归档
+            </a>
+        </li>
+      </ul></nav>
+</header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content"><article class="post">
+    <header class="post-header">
+      <h1 class="post-title">巧用Shadowsocks Replay
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2015-05-08
+        </span></div>
+    </header>
+
+    <div class="post-content"><p>使用 Shadowsocks 有一段时间了，基本上也找到了比较靠谱的使用方法。</p>
+<p>除了基本的<a href="https://github.com/shadowsocks/shadowsocks/wiki/Optimizing-Shadowsocks" target="_blank" rel="noopener">优化</a>方法之外，还有一些其他的用法。</p>
+<p>这里我们介绍利用 Haproxy 来做 Shadowsocks 中继来实现加速的效果。</p>
+<p>很多时候，我们自己的网络直连国外的 Shadowsocks 服务器由于各种的网络原因，国际出口带宽限制等，速度会比较慢。这时，某些情况下，我们可以试试曲线救国。利用国内某个网络比较好的主机做中继，利用他的优秀的网络，连接上国外。实现总体加速的效果。</p>
+<p>之所以想尝试这种方式，是因为自己手上管理着国内校园网的一台主机，并且可以使用 IPv6。我的 DO 主机都是默认开启了 IPv6 支持的，我们学校的 IPv6 管理不严，几乎没有什么限制，国际出口带宽，通过下载测试文件，达到过 50 M 带宽。而且这个校园网的主机，在全国大部分地方的网络还是比较通畅的。</p>
+<p>首先，Shadowsocks 官方是有介绍 Relay 的<a href="https://github.com/shadowsocks/shadowsocks/wiki/Setup-a-Shadowsocks-relay" target="_blank" rel="noopener">文档</a>的。</p>
+<p>这里我们简要的介绍一下。</p>
+<p>官方文档里，最先介绍的是利用 iptables 做的转发。但是这种方法不够直观，而且不利于调优。我们比较推荐利用 Haproxy 的方式。</p>
+<p>Haproxy 本来是一个 4/7 层的负载均衡软件，这里，我们可以利用他来实现中继或者负载均衡的效果。</p>
+<p>首先要在国内的主机上安装 Haproxy。如果需要 IPv6 的支持的话，你需要安装 Haproxy 1.5 版本。</p>
+<p>然后是配置文件<code>/etc/haproxy/haproxy.cfg</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">global</span><br><span class="line">        ulimit-n  51200</span><br><span class="line"></span><br><span class="line">defaults</span><br><span class="line">        log global</span><br><span class="line">        mode    tcp</span><br><span class="line">        option  dontlognull</span><br><span class="line">        contimeout 10000</span><br><span class="line">        clitimeout 150000</span><br><span class="line">        srvtimeout 150000</span><br><span class="line"></span><br><span class="line">frontend ss-in</span><br><span class="line">        bind *:8388</span><br><span class="line">        default_backend ss-out</span><br><span class="line"></span><br><span class="line">backend ss-out</span><br><span class="line">        server server1 US_VPS_IP:8388 maxconn 20480</span><br></pre></td></tr></table></figure>
+
+<p>上面是 Haproxy 1.4 的配置文件，到 1.5 版本之后，contimeout、clitimeout、srvtimeout 官方建议改成<code>timeout connect</code>、<code>timeout client</code>和<code>timeout server</code>。</p>
+<p><code>timeout connect</code>在 shadowsocks 的官方文档里写的是1000毫秒，但是在实际使用过程中发现，这样子经常会出现连接断掉的情况，建议改成10000，也就是10秒。</p>
+<p>在<code>backend</code>里面，写上你的 shadowsocks 的地址即可。IPv6 也一样写法。</p>
+<p>然后运行即可<code>haproxy -f /etc/haproxy/haproxy.cfg</code>。</p>
+<p>同时，如果你有多个 Shadowsocks 的话，还可以继续写在<code>backend</code>里面，可以起到负载均衡的作用。但是这样的话，就建议，这多个 Shadowsocks 的密码得是相同的，要不然本机的 shadowsocks 就不好处理了。</p>
+
+      </div>
+      
+      <footer class="post-footer">
+        <div class="post-tags">
+            <a href="/tags/%E7%BF%BB%E5%A2%99/">翻墙</a>
+            <a href="/tags/Shadowsocks/">Shadowsocks</a>
+            </div>
+        
+        <nav class="post-nav"><a class="prev" href="/2015/05/12/SQLAlchemy%E7%9A%84%E6%89%B9%E9%87%8F%E6%8F%92%E5%85%A5/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">SQLAlchemy的批量插入</span>
+        <span class="prev-text nav-mobile">上一篇</span>
+      </a>
+    <a class="next" href="/2015/02/06/Raft%E4%B8%80%E8%87%B4%E6%80%A7%E7%AE%97%E6%B3%95%E8%AE%BA%E6%96%87%E7%BF%BB%E8%AF%91/">
+        <span class="next-text nav-default">Raft一致性算法论文翻译</span>
+        <span class="prev-text nav-mobile">下一篇</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    </nav></footer>
+    </article></div><div class="comments" id="comments"><div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript" target="_blank" rel="noopener">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div></div>
+      </main>
+
+      <footer id="footer" class="footer"><div class="social-links"><a href="mailto:maemual@gmail.com" class="iconfont icon-email" title="email"></a>
+        <a href="https://twitter.com/maemual" target="_blank" rel="noopener" class="iconfont icon-twitter" title="twitter"></a>
+        <a href="https://github.com/maemual" target="_blank" rel="noopener" class="iconfont icon-github" title="github"></a>
+        <a href="https://www.zhihu.com/people/maemual" target="_blank" rel="noopener" class="iconfont icon-zhihu" title="zhihu"></a>
+        <a href="https://www.douban.com/people/maemual/" target="_blank" rel="noopener" class="iconfont icon-douban" title="douban"></a>
+        <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    </div><div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even" target="_blank" rel="noopener">Even</a>
+  </span>
+
+  <span class="copyright-year">&copy;2014 - 2020<span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">maemual</span>
+  </span>
+</div>
+</footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div><script type="text/javascript">
+    var disqus_config = function () {
+        this.page.url = 'https://0x01.io/2015/05/08/%E5%B7%A7%E7%94%A8Shadowsocks-Replay/';
+        this.page.identifier = '2015/05/08/巧用Shadowsocks-Replay/';
+        this.page.title = '巧用Shadowsocks Replay';
+    };
+    (function() {
+    var d = document, s = d.createElement('script');
+
+    s.src = '//0x01-io.disqus.com/embed.js';
+
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();  
+  </script><script type="text/javascript" src="/lib/jquery/jquery.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/src/even.js?v=2.11.0"></script>
+</body>
+</html>

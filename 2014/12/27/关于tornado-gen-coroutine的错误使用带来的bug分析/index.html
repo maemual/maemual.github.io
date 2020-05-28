@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="description" content="关于tornado.gen.coroutine的错误使用带来的bug分析"/><meta name="keywords" content="Python, Tornado, 0x01" /><meta name="google-site-verification" content="1XE4HjcRwxfqFivnUCvu3UNFTTG4dg7dvjgCPwcrxGg" /><link rel="alternate" href="/atom.xml" title="0x01"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.11.0" />
+<link rel="canonical" href="https://0x01.io/2014/12/27/关于tornado-gen-coroutine的错误使用带来的bug分析/"/>
+
+<link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css" />
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.11.0" />
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-74494566-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-74494566-1');
+</script><script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+<script>
+  window.config = {"leancloud":{"app_id":null,"app_key":null},"toc":true,"fancybox":true,"pjax":"","latex":false};
+</script>
+
+    <title>关于tornado.gen.coroutine的错误使用带来的bug分析 - 0x01</title>
+  <meta name="generator" content="Hexo 4.2.0"><link rel="alternate" href="/atom.xml" title="0x01" type="application/atom+xml">
+</head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">0x01</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list"><a href="/">
+        <li class="mobile-menu-item">首页
+          </li>
+      </a><a href="/archives/">
+        <li class="mobile-menu-item">归档
+          </li>
+      </a></ul>
+</nav>
+<div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">0x01</a>
+</div>
+
+<nav class="site-navbar"><ul id="menu" class="menu"><li class="menu-item">
+          <a class="menu-item-link" href="/">
+            首页
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            归档
+            </a>
+        </li>
+      </ul></nav>
+</header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content"><article class="post">
+    <header class="post-header">
+      <h1 class="post-title">关于tornado.gen.coroutine的错误使用带来的bug分析
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2014-12-27
+        </span></div>
+    </header>
+
+    <div class="post-content"><p>最近线上出了一个bug，让我来解决一下。大致逻辑是前端的一个ajax请求的response，其中body部分本来应该是一个json，却神秘失踪了。正常返回了200 ok，就是http response的body为空，导致前端处理有问题。经过分析，应该是最后在返回response的body之前，连接被关闭了。</p>
+<p>简化逻辑的demo如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">class MainHandler(tornado.web.RequestHandler):</span><br><span class="line"></span><br><span class="line">    @tornado.gen.coroutine</span><br><span class="line">    def get(self):</span><br><span class="line">        print &#39;get start&#39;</span><br><span class="line">        yield self.fetch_something()  # 原来错误的逻辑就是这里的yield忘了写了</span><br><span class="line">        print &#39;get over&#39;</span><br><span class="line"></span><br><span class="line">    @tornado.gen.coroutine</span><br><span class="line">    def fetch_something(self):</span><br><span class="line">        print &#39;fetch start&#39;</span><br><span class="line">        http_client &#x3D; AsyncHTTPClient()</span><br><span class="line">        response &#x3D; yield http_client.fetch(&quot;http:&#x2F;&#x2F;www.baidu.com&quot;)</span><br><span class="line">        print &#39;fetch over&#39;</span><br><span class="line">        self.write(response.body)</span><br></pre></td></tr></table></figure>
+
+<p>原来的逻辑简化就是需要异步的抓取一个东西之后返回。正常的执行逻辑应该如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">get start</span><br><span class="line">fetch start</span><br><span class="line">fetch over</span><br><span class="line">get over</span><br></pre></td></tr></table></figure>
+
+<p>但是因为第一个yield的缺失，导致执行的逻辑如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">get start</span><br><span class="line">fetch start</span><br><span class="line">get over</span><br><span class="line">fetch over</span><br></pre></td></tr></table></figure>
+
+<p>也就意味着，在<code>fetch_something</code>中，yield之后的逻辑在执行的时候，最上层调用的get方法已经执行完毕，这个连接已经被关闭掉了。</p>
+<p>问题出在<code>tornado.gen.coroutine</code>这个装饰器用的姿势不对，应该有的yield给丢了。</p>
+<p>扒出tornado的这个装饰器的源码，核心部分如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">@functools.wraps(func)</span><br><span class="line">def wrapper(*args, **kwargs):</span><br><span class="line">    future &#x3D; TracebackFuture()  # 0</span><br><span class="line"></span><br><span class="line">    if replace_callback and &#39;callback&#39; in kwargs:</span><br><span class="line">        callback &#x3D; kwargs.pop(&#39;callback&#39;)</span><br><span class="line">        IOLoop.current().add_future(</span><br><span class="line">            future, lambda future: callback(future.result()))</span><br><span class="line"></span><br><span class="line">    try:</span><br><span class="line">        result &#x3D; func(*args, **kwargs)  # 1</span><br><span class="line">    except (Return, StopIteration) as e:</span><br><span class="line">        result &#x3D; getattr(e, &#39;value&#39;, None)</span><br><span class="line">    except Exception:</span><br><span class="line">        future.set_exc_info(sys.exc_info())</span><br><span class="line">        return future</span><br><span class="line">    else:</span><br><span class="line">        if isinstance(result, types.GeneratorType):  # 2</span><br><span class="line">            try:</span><br><span class="line">                orig_stack_contexts &#x3D; stack_context._state.contexts</span><br><span class="line">                yielded &#x3D; next(result)  # 3</span><br><span class="line">                if stack_context._state.contexts is not orig_stack_contexts:</span><br><span class="line">                    yielded &#x3D; TracebackFuture()</span><br><span class="line">                    yielded.set_exception(</span><br><span class="line">                        stack_context.StackContextInconsistentError(</span><br><span class="line">                            &#39;stack_context inconsistency (probably caused &#39;</span><br><span class="line">                            &#39;by yield within a &quot;with StackContext&quot; block)&#39;))</span><br><span class="line">            except (StopIteration, Return) as e:</span><br><span class="line">                future.set_result(getattr(e, &#39;value&#39;, None))</span><br><span class="line">            except Exception:</span><br><span class="line">                future.set_exc_info(sys.exc_info())</span><br><span class="line">            else:</span><br><span class="line">                Runner(result, future, yielded)</span><br><span class="line">            try:</span><br><span class="line">                return future</span><br><span class="line">            finally:</span><br><span class="line">                future &#x3D; None</span><br><span class="line">    future.set_result(result)</span><br><span class="line">    return future</span><br><span class="line">return wrapper</span><br></pre></td></tr></table></figure>
+
+<p>在分析这个装饰器之前，先要补一点python的基础知识。</p>
+<p>首先是关于装饰器。如下代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">In [3]: def a():</span><br><span class="line">   ...:     print 1</span><br><span class="line">   ...:     yield 2</span><br><span class="line">   ...:     print 3</span><br><span class="line">   ...:</span><br><span class="line"></span><br><span class="line">In [4]: a()</span><br><span class="line">Out[4]: &lt;generator object a at 0x10db4b4b0&gt;</span><br><span class="line"></span><br><span class="line">In [6]: next(a())</span><br><span class="line">1</span><br><span class="line">Out[6]: 2</span><br></pre></td></tr></table></figure>
+
+<p>当一个函数中有yield之后，在python里面调用这个方法，如上面的<code>In [4]: a()</code>，已经不是直接运行这个方法了，而是返回一个generator。一定要记住，这个时候，这个方法还没有开始执行。实际开始执行这个generator可以使用如上的next驱动他，或者send，具体细节可以参详一些python基础语法书。</p>
+<p>再来谈谈装饰器。看一下这个简单的demo：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">In [4]: def a(func):</span><br><span class="line">   ...:     def wrapper(*args, **kwargs):</span><br><span class="line">   ...:         print &#39;a:1&#39;</span><br><span class="line">   ...:         func(*args, **kwargs)</span><br><span class="line">   ...:         print &#39;a:2&#39;</span><br><span class="line">   ...:     return wrapper</span><br><span class="line">   ...:</span><br><span class="line"></span><br><span class="line">In [5]: @a</span><br><span class="line">   ...: def b():</span><br><span class="line">   ...:     print &#39;b&#39;</span><br><span class="line">   ...:</span><br><span class="line"></span><br><span class="line">In [6]: b()</span><br><span class="line">a:1</span><br><span class="line">b</span><br><span class="line">a:2</span><br></pre></td></tr></table></figure>
+
+<p>我们定义了一个装饰器a和使用了装饰器a的方法b。装饰器最主要的作用就是在被装饰的方法前后可以执行一些逻辑。如上，在b执行的前后分别执行了一些装饰器a中的逻辑。</p>
+<p>关于生成器和装饰器就讲到这里。基础语法不明白的可以去看看雨痕大叔写的<a href="https://github.com/qyuhen/book" target="_blank" rel="noopener">python学习笔记</a>。</p>
+<p>我们回到<code>tornado.gen.coroutine</code>这个装饰器。这个装饰器调用的逻辑在1处。那么之前之后都做了什么呢？</p>
+<p>首先是0处，创建了一个<code>future</code>对象。并在wrapper的最后返回了这个对象。</p>
+<p>在1处，调用了被装饰的方法。这里分两种情况，返回的result是一个<code>GeneratorType</code>或者不是。如果不是，那么下面2处的if判断自然不成功，所以不会进入if的逻辑。然后就是直接返回了。如果是一个<code>GeneratorType</code>，那么进入if之后的逻辑，重要的是3处，使用next启动了一个Generator的执行逻辑。</p>
+<p>我们来根据最上面我们自己的demo跟踪一下执行逻辑。首先是调用get。当然由于这个get也有<code>@tornado.gen.coroutine</code>装饰器，所以这个装饰器前面的逻辑自然也会执行。到<code>@tornado.gen.coroutine</code>的1处，由于get在原先错误的用法中，没有写yield，所以自然是直接执行这个代码。首先<code>print &#39;get start&#39;</code>，然后调用<code>self.fetch_something()</code>。注意，这个<code>fetch_something</code>也是有<code>@tornado.gen.coroutine</code>装饰器的。所以也要进入这个装饰器的执行逻辑中。但是到1处，因为<code>fetch_something</code>中是有yield的，所以这个result会是一个<code>GeneratorType</code>。这样子，后面2处的if就会进入。然后就到3处，这时，<code>fetch_something</code>就会真正的开始执行。所以就执行到了<code>print &#39;fetch start&#39;</code>这句。接下来就到了<code>yield http_client.fetch(&quot;http://www.baidu.com&quot;)</code>这句，因为yield的存在，<code>fetch_something</code>的执行权主动被交出了。</p>
+<p>这时，执行逻辑就回到了调用<code>self.fetch_something()</code>的地方。所以接下来执行的就是<code>print &#39;get over&#39;</code>，再接着get方法就执行完了，在tornado中，这个request的连接就被关闭了。</p>
+<p>在之后，当<code>http_client.fetch(&quot;http://www.baidu.com&quot;)</code>真正的抓取到数据之后，执行逻辑被调度回来，执行了接下来的<code>print &#39;fetch over&#39;</code>。这时，下面的<code>self.write</code>虽然执行了，但是由于连接已经被关闭了，所以写的东西已经写不回去了。</p>
+
+      </div>
+      
+      <footer class="post-footer">
+        <div class="post-tags">
+            <a href="/tags/Python/">Python</a>
+            <a href="/tags/Tornado/">Tornado</a>
+            </div>
+        
+        <nav class="post-nav"><a class="prev" href="/2015/02/06/Raft%E4%B8%80%E8%87%B4%E6%80%A7%E7%AE%97%E6%B3%95%E8%AE%BA%E6%96%87%E7%BF%BB%E8%AF%91/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">Raft一致性算法论文翻译</span>
+        <span class="prev-text nav-mobile">上一篇</span>
+      </a>
+    <a class="next" href="/2014/12/20/%E4%B8%80%E8%87%B4%E6%80%A7hash/">
+        <span class="next-text nav-default">一致性hash</span>
+        <span class="prev-text nav-mobile">下一篇</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    </nav></footer>
+    </article></div><div class="comments" id="comments"><div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript" target="_blank" rel="noopener">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div></div>
+      </main>
+
+      <footer id="footer" class="footer"><div class="social-links"><a href="mailto:maemual@gmail.com" class="iconfont icon-email" title="email"></a>
+        <a href="https://twitter.com/maemual" target="_blank" rel="noopener" class="iconfont icon-twitter" title="twitter"></a>
+        <a href="https://github.com/maemual" target="_blank" rel="noopener" class="iconfont icon-github" title="github"></a>
+        <a href="https://www.zhihu.com/people/maemual" target="_blank" rel="noopener" class="iconfont icon-zhihu" title="zhihu"></a>
+        <a href="https://www.douban.com/people/maemual/" target="_blank" rel="noopener" class="iconfont icon-douban" title="douban"></a>
+        <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    </div><div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even" target="_blank" rel="noopener">Even</a>
+  </span>
+
+  <span class="copyright-year">&copy;2014 - 2020<span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">maemual</span>
+  </span>
+</div>
+</footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div><script type="text/javascript">
+    var disqus_config = function () {
+        this.page.url = 'https://0x01.io/2014/12/27/%E5%85%B3%E4%BA%8Etornado-gen-coroutine%E7%9A%84%E9%94%99%E8%AF%AF%E4%BD%BF%E7%94%A8%E5%B8%A6%E6%9D%A5%E7%9A%84bug%E5%88%86%E6%9E%90/';
+        this.page.identifier = '2014/12/27/关于tornado-gen-coroutine的错误使用带来的bug分析/';
+        this.page.title = '关于tornado.gen.coroutine的错误使用带来的bug分析';
+    };
+    (function() {
+    var d = document, s = d.createElement('script');
+
+    s.src = '//0x01-io.disqus.com/embed.js';
+
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();  
+  </script><script type="text/javascript" src="/lib/jquery/jquery.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/src/even.js?v=2.11.0"></script>
+</body>
+</html>

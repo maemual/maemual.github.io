@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="description" content="Pillow踩坑记录之图片水印"/><meta name="keywords" content="pillow, 水印, watermark, 0x01" /><meta name="google-site-verification" content="1XE4HjcRwxfqFivnUCvu3UNFTTG4dg7dvjgCPwcrxGg" /><link rel="alternate" href="/atom.xml" title="0x01"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.11.0" />
+<link rel="canonical" href="https://0x01.io/2018/03/29/Pillow踩坑记录之图片水印/"/>
+
+<link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css" />
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.11.0" />
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-74494566-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-74494566-1');
+</script><script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+<script>
+  window.config = {"leancloud":{"app_id":null,"app_key":null},"toc":true,"fancybox":true,"pjax":"","latex":false};
+</script>
+
+    <title>Pillow踩坑记录之图片水印 - 0x01</title>
+  <meta name="generator" content="Hexo 4.2.0"><link rel="alternate" href="/atom.xml" title="0x01" type="application/atom+xml">
+</head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">0x01</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list"><a href="/">
+        <li class="mobile-menu-item">首页
+          </li>
+      </a><a href="/archives/">
+        <li class="mobile-menu-item">归档
+          </li>
+      </a></ul>
+</nav>
+<div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">0x01</a>
+</div>
+
+<nav class="site-navbar"><ul id="menu" class="menu"><li class="menu-item">
+          <a class="menu-item-link" href="/">
+            首页
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            归档
+            </a>
+        </li>
+      </ul></nav>
+</header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content"><article class="post">
+    <header class="post-header">
+      <h1 class="post-title">Pillow踩坑记录之图片水印
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-03-29
+        </span></div>
+    </header>
+
+    <div class="post-content"><p>好久没写博客了。最近在做图片水印功能，本来觉得难度不大，照着 Pillow 文档随便搞搞就行了。没想到设计师验收的时候发现一堆坑。也许是学艺不精，没有仔细研究过 Pillow，只是随便看看文档做的，可能是我用的姿势不对才导致一堆坑。</p>
+<p>基本需求是：</p>
+<ol>
+<li>前面一个品牌 logo</li>
+<li>后面一个 @用户名，用思源黑体常规字重的字体</li>
+<li>有投影效果</li>
+<li>整体大小和图片宽度成比例</li>
+</ol>
+<p>首先去 Pillow 文档里找了个 <a href="http://pillow.readthedocs.io/en/latest/reference/ImageDraw.html#example-draw-partial-opacity-text" target="_blank" rel="noopener">example</a></p>
+<p>在网上查一些 blog 也都是这么写的，于是就照着写了一个基本的。</p>
+<a id="more"></a>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment"># encoding: utf-8</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image, ImageDraw, ImageFont</span><br><span class="line"></span><br><span class="line">SourceHanSans_font = <span class="string">'~/SourceHanSansCN-Regular.otf'</span></span><br><span class="line"></span><br><span class="line">STANDARD_SIDE_MARGIN = <span class="number">12</span>  <span class="comment"># 右边距</span></span><br><span class="line">STANDARD_BOTTOM_MARGIN = <span class="number">10</span>  <span class="comment"># 下边距</span></span><br><span class="line">SHADOW_OFFSET = <span class="number">1</span>  <span class="comment"># 水印阴影偏移</span></span><br><span class="line"></span><br><span class="line">im = Image.open(<span class="string">'test.jpg'</span>).convert(<span class="string">"RGBA"</span>)</span><br><span class="line">username = <span class="string">u'＠用户名'</span></span><br><span class="line"></span><br><span class="line">im_width, im_height = im.size</span><br><span class="line"></span><br><span class="line"><span class="comment"># 450 宽度是基准，设计要求小于这个宽度的不会有水印</span></span><br><span class="line">scale = im_width * <span class="number">1.0</span> / <span class="number">450</span></span><br><span class="line"></span><br><span class="line">font = ImageFont.truetype(SourceHanSans_font, size=int(round(<span class="number">13</span> * scale)))  <span class="comment"># 13 号字体也是基准</span></span><br><span class="line">text = username</span><br><span class="line">text_width, text_height = font.getsize(text)</span><br><span class="line">text_x = int(round(im_width - STANDARD_SIDE_MARGIN * scale - text_width))</span><br><span class="line">text_y = int(round(im_height - STANDARD_BOTTOM_MARGIN * scale - text_height))</span><br><span class="line"></span><br><span class="line">txt = Image.new(<span class="string">'RGBA'</span>, im.size, (<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>))</span><br><span class="line">draw = ImageDraw.Draw(txt)</span><br><span class="line"></span><br><span class="line">draw.text((text_x + int(round(SHADOW_OFFSET * scale)), text_y + int(round(SHADOW_OFFSET * scale))), text, font=font, fill=(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">77</span>))  <span class="comment"># 黑色 40% 不透明度的阴影</span></span><br><span class="line">draw.text((text_x, text_y), text, font=font, fill=(<span class="number">255</span>, <span class="number">255</span>, <span class="number">255</span>, <span class="number">255</span>))  <span class="comment"># 白色</span></span><br><span class="line">r = Image.alpha_composite(combined, txt)</span><br><span class="line">draw = ImageDraw.Draw(r)</span><br><span class="line"></span><br><span class="line">r.save(<span class="string">"result.jpg"</span>, format=<span class="string">"JPEG"</span>, quality=<span class="number">95</span>)  <span class="comment"># 不设置quality的话会默认以 75 的质量保存，损失很多画质，95 是最大值。</span></span><br></pre></td></tr></table></figure>
+
+<p>看起来还可以啊，计算好文字的长宽，先绘制投影。投影就是一个黑色带透明度的同样的文字，(x,y) 坐标分别向右和下增加若干像素。绘制完之后，再在原来的 (x,y) 位置绘制白色文字就行了。文字都绘制到一张空白的透明图上，然后把两个图层贴一块就行了。</p>
+<p>搞出来发现，怎么文字不是按照我说的 (x,y) 放置，y 坐标偏移了若干像素呢？</p>
+<p>然后网上查了一圈发现，字体这个东西，原来是有个 offset 的概念的。绘制的时候把 offset 自己减去就行了。晕。改一把。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment"># encoding: utf-8</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image, ImageDraw, ImageFont</span><br><span class="line"></span><br><span class="line">SourceHanSans_font = <span class="string">'~/SourceHanSansCN-Regular.otf'</span></span><br><span class="line"></span><br><span class="line">STANDARD_SIDE_MARGIN = <span class="number">12</span>  <span class="comment"># 右边距</span></span><br><span class="line">STANDARD_BOTTOM_MARGIN = <span class="number">10</span>  <span class="comment"># 下边距</span></span><br><span class="line">SHADOW_OFFSET = <span class="number">1</span>  <span class="comment"># 水印阴影偏移</span></span><br><span class="line"></span><br><span class="line">im = Image.open(<span class="string">'test.jpg'</span>).convert(<span class="string">"RGBA"</span>)</span><br><span class="line">username = <span class="string">u'＠用户名'</span></span><br><span class="line"></span><br><span class="line">im_width, im_height = im.size</span><br><span class="line"></span><br><span class="line"><span class="comment"># 450 宽度是基准，设计要求小于这个宽度的不会有水印</span></span><br><span class="line">scale = im_width * <span class="number">1.0</span> / <span class="number">450</span></span><br><span class="line"></span><br><span class="line">font = ImageFont.truetype(SourceHanSans_font, size=int(round(<span class="number">13</span> * scale)))  <span class="comment"># 13 号字体也是基准</span></span><br><span class="line">text = username</span><br><span class="line">text_width, text_height = font.getsize(text)</span><br><span class="line">text_x_offset, text_y_offset = font.getoffset(text)  <span class="comment"># 这里</span></span><br><span class="line">text_x = int(round(im_width - STANDARD_SIDE_MARGIN * scale - text_width))</span><br><span class="line">text_y = int(round(im_height - STANDARD_BOTTOM_MARGIN * scale - text_height))</span><br><span class="line"></span><br><span class="line">txt = Image.new(<span class="string">'RGBA'</span>, im.size, (<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>))</span><br><span class="line">draw = ImageDraw.Draw(txt)</span><br><span class="line"></span><br><span class="line">draw.text((text_x - text_x_offset + int(round(SHADOW_OFFSET * scale)), text_y - text_y_offset + int(round(SHADOW_OFFSET * scale))), text, font=font, fill=(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">77</span>))  <span class="comment"># 黑色 40% 不透明度的阴影</span></span><br><span class="line">draw.text((text_x - text_x_offset, text_y - text_y_offset), text, font=font, fill=(<span class="number">255</span>, <span class="number">255</span>, <span class="number">255</span>, <span class="number">255</span>))  <span class="comment"># 白色</span></span><br><span class="line">r = Image.alpha_composite(combined, txt)</span><br><span class="line">draw = ImageDraw.Draw(r)</span><br><span class="line"></span><br><span class="line">r.save(<span class="string">"result.jpg"</span>, format=<span class="string">"JPEG"</span>, quality=<span class="number">95</span>)  <span class="comment"># 不设置quality的话会默认以 75 的质量保存，损失很多画质，95 是最大值。</span></span><br></pre></td></tr></table></figure>
+
+<p>然后就开心的给设计师验收了。</p>
+<p>然后就坑爹了。</p>
+<p>在图片大的时候，比如 1080P 这么大的图，看着效果确实还行。但是在小图的时候图片中文字周围有不明的黑色锯齿。</p>
+<p>例如这样 </p>
+<p><img src="https://dn-0x01-io.qbox.me/2018-03-30%2015.07.40.jpg" alt="黑色锯齿"></p>
+<p>原因不明。然后就网上搜抗锯齿的方案。stackoverflow 上看到一些方法，例如<a href="https://stackoverflow.com/questions/14350645/is-there-an-antialiasing-method-for-python-pil" target="_blank" rel="noopener">这里</a>。就是把图片先放大 2 倍，等比放大绘制完成之后，再缩小到 1/2，也就是原图大小，并在 pillow 里的 <code>resize</code> 方法添加 <code>filter=Image.ANTIALIAS</code>。</p>
+<p>确实有不少效果，黑色锯齿少了很多，但是还是有，并且因为缩小，绘制出来的文字画质有损失。不能接受。</p>
+<p>查到最后发现，原来直接在原图上绘制就不会有黑色锯齿。之前都是先生成一张透明的图层，在这个上面绘制完成之后，把原图和透明图合并。不知道为什么，在透明图上绘制白色的文字就会有黑色锯齿，在尺寸小的时候。于是就改了一下思路，全部直接在原图上进行绘制，不用透明图了。</p>
+<p>但是又发现，绘制出来的问题，没有透明度了。崩溃。不知道为什么。就又改了一下思路，把需要透明度的黑色阴影在透明图上绘制，和原图贴合之后，再在原图上绘制不需要透明度的白色文字。这样就解决了问题。晕死。</p>
+<p>其实同时还有另一个问题，就是品牌 logo，其实就是「知乎」两个字。设计师给我的是一个 svg 图，方便等比放大。但是搜了一圈，发现 Python 没有什么特别方便的，操作 svg 的库，不是依赖太大，就是用起来很麻烦，没什么人维护。就让设计师换了个思路，把 svg 图转成 ttf 字体文件，到时候一起用字体绘制多方便。</p>
+
+      </div>
+      
+      <footer class="post-footer">
+        <div class="post-tags">
+            <a href="/tags/pillow/">pillow</a>
+            <a href="/tags/%E6%B0%B4%E5%8D%B0/">水印</a>
+            <a href="/tags/watermark/">watermark</a>
+            </div>
+        
+        <nav class="post-nav"><a class="prev" href="/2020/02/16/x86-%E8%BD%AF%E8%B7%AF%E7%94%B1%E9%80%8F%E6%98%8E%E4%BB%A3%E7%90%86%E6%9E%84%E5%BB%BA%E6%96%B9%E6%A1%88v2020-02/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">x86 软路由透明代理构建方案v2020.02</span>
+        <span class="prev-text nav-mobile">上一篇</span>
+      </a>
+    <a class="next" href="/2017/04/01/x86-%E8%BD%AF%E8%B7%AF%E7%94%B1%E9%80%8F%E6%98%8E%E4%BB%A3%E7%90%86%E6%9E%84%E5%BB%BA%E6%96%B9%E6%A1%88/">
+        <span class="next-text nav-default">x86 软路由透明代理构建方案</span>
+        <span class="prev-text nav-mobile">下一篇</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    </nav></footer>
+    </article></div><div class="comments" id="comments"><div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript" target="_blank" rel="noopener">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div></div>
+      </main>
+
+      <footer id="footer" class="footer"><div class="social-links"><a href="mailto:maemual@gmail.com" class="iconfont icon-email" title="email"></a>
+        <a href="https://twitter.com/maemual" target="_blank" rel="noopener" class="iconfont icon-twitter" title="twitter"></a>
+        <a href="https://github.com/maemual" target="_blank" rel="noopener" class="iconfont icon-github" title="github"></a>
+        <a href="https://www.zhihu.com/people/maemual" target="_blank" rel="noopener" class="iconfont icon-zhihu" title="zhihu"></a>
+        <a href="https://www.douban.com/people/maemual/" target="_blank" rel="noopener" class="iconfont icon-douban" title="douban"></a>
+        <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    </div><div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even" target="_blank" rel="noopener">Even</a>
+  </span>
+
+  <span class="copyright-year">&copy;2014 - 2020<span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">maemual</span>
+  </span>
+</div>
+</footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div><script type="text/javascript">
+    var disqus_config = function () {
+        this.page.url = 'https://0x01.io/2018/03/29/Pillow%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95%E4%B9%8B%E5%9B%BE%E7%89%87%E6%B0%B4%E5%8D%B0/';
+        this.page.identifier = '2018/03/29/Pillow踩坑记录之图片水印/';
+        this.page.title = 'Pillow踩坑记录之图片水印';
+    };
+    (function() {
+    var d = document, s = d.createElement('script');
+
+    s.src = '//0x01-io.disqus.com/embed.js';
+
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();  
+  </script><script type="text/javascript" src="/lib/jquery/jquery.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/src/even.js?v=2.11.0"></script>
+</body>
+</html>

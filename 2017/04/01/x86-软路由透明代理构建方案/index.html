@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="description" content="x86 软路由透明代理构建方案"/><meta name="keywords" content="翻墙, shadowsocks, 软路由, 0x01" /><meta name="google-site-verification" content="1XE4HjcRwxfqFivnUCvu3UNFTTG4dg7dvjgCPwcrxGg" /><link rel="alternate" href="/atom.xml" title="0x01"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.11.0" />
+<link rel="canonical" href="https://0x01.io/2017/04/01/x86-软路由透明代理构建方案/"/>
+
+<link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css" />
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.11.0" />
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-74494566-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-74494566-1');
+</script><script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+<script>
+  window.config = {"leancloud":{"app_id":null,"app_key":null},"toc":true,"fancybox":true,"pjax":"","latex":false};
+</script>
+
+    <title>x86 软路由透明代理构建方案 - 0x01</title>
+  <meta name="generator" content="Hexo 4.2.0"><link rel="alternate" href="/atom.xml" title="0x01" type="application/atom+xml">
+</head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">0x01</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list"><a href="/">
+        <li class="mobile-menu-item">首页
+          </li>
+      </a><a href="/archives/">
+        <li class="mobile-menu-item">归档
+          </li>
+      </a></ul>
+</nav>
+<div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">0x01</a>
+</div>
+
+<nav class="site-navbar"><ul id="menu" class="menu"><li class="menu-item">
+          <a class="menu-item-link" href="/">
+            首页
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            归档
+            </a>
+        </li>
+      </ul></nav>
+</header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content"><article class="post">
+    <header class="post-header">
+      <h1 class="post-title">x86 软路由透明代理构建方案
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2017-04-01
+        </span></div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#基本架构"><span class="toc-text">基本架构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#网络环境"><span class="toc-text">网络环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#网络配置"><span class="toc-text">网络配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#开启双网卡"><span class="toc-text">开启双网卡</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DHCP"><span class="toc-text">DHCP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NAT"><span class="toc-text">NAT</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#DNS-解析防污染"><span class="toc-text">DNS 解析防污染</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#overture"><span class="toc-text">overture</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#dnsmasq"><span class="toc-text">dnsmasq</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代理"><span class="toc-text">代理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#shadowsocks"><span class="toc-text">shadowsocks</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#redsocks"><span class="toc-text">redsocks</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#透明代理"><span class="toc-text">透明代理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ipset"><span class="toc-text">ipset</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#iptable"><span class="toc-text">iptable</span></a></li></ol></li></ol>
+    </div>
+  </div><div class="post-content"><h2 id="基本架构"><a href="#基本架构" class="headerlink" title="基本架构"></a>基本架构</h2><p>网络配置：<br>    双网卡 + NAT（iptable）+ DHCP<br>DNS 解析防污染：<br>    <a href="https://github.com/shawn1m/overture" target="_blank" rel="noopener">overture</a>（解析）+ dnsmasq（缓存）<br>代理：<br>    shadowsocks（普通 Python 版即可）+ redsocks<br>透明代理：<br>    iptable + ipset（国内 IP 段）</p>
+<a id="more"></a>
+
+<h2 id="网络环境"><a href="#网络环境" class="headerlink" title="网络环境"></a>网络环境</h2><p>主机是安装了 Ubuntu 14.04 的 x86 机器。双网卡分别是对接外网的网卡 p2p1，分配 IP 是 2.3.3.3（瞎说的）；接内网的网卡 eth0，分配的 IP 是 192.168.3.1，也就是后面的 192.168.3.0/24 的子网的网关。</p>
+<h2 id="网络配置"><a href="#网络配置" class="headerlink" title="网络配置"></a>网络配置</h2><h3 id="开启双网卡"><a href="#开启双网卡" class="headerlink" title="开启双网卡"></a>开启双网卡</h3><p>首先是装上双网卡肯定的。确保在系统里新装的网卡已经启用了，在 ifconfig 里能看到两个网卡。顺便记住并记牢接内外网的网卡的名字，我这里是内网 eth0，外网 p2p1。</p>
+<p>接内网的网卡 eth0 可以自己配置静态 IP，这里不说了，网上一堆教程，无非就是在 <code>/etc/network/interfaces</code> 改配置。改完之后不知道怎么生效的就直接重启机器吧。</p>
+<h3 id="DHCP"><a href="#DHCP" class="headerlink" title="DHCP"></a>DHCP</h3><p>先安装 DHCP 的服务器 <code>sudo apt-get install isc-dhcp-server</code>。然后配置 DHCP 网卡 <code>/etc/default/isc-dhcp-server</code> 将<code>INTERFACES=&quot;&quot;</code>配置为对应内网网卡。</p>
+<p>配置 <code>/etc/dhcp/dhcpd.conf</code> 更新 DHCP 服务器相关参数：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">subnet 192.168.3.0 netmask 255.255.255.0 &#123;</span><br><span class="line">    &#x2F;&#x2F;当DHCP客户端主机启动网络时服务器能够分配给他的IP地址的范围</span><br><span class="line">    range 192.168.3.60 192.168.3.240;</span><br><span class="line">    &#x2F;&#x2F;客户端能使用该IP地址的时间,以秒计算</span><br><span class="line">    default-lease-time 86400;</span><br><span class="line">    max-lease-time 86400;</span><br><span class="line">    &#x2F;&#x2F;客户端默认网关</span><br><span class="line">    option routers 192.168.3.1;</span><br><span class="line">    &#x2F;&#x2F;不从一个网口向另一个网口转发 DHCP 请求</span><br><span class="line">    option ip-forwarding off;</span><br><span class="line">    &#x2F;&#x2F;设置客户端广播地址和子网掩码</span><br><span class="line">    option broadcast-address 192.168.3.255;</span><br><span class="line">    option subnet-mask 255.255.255.0;</span><br><span class="line">   &#x2F;&#x2F;设置客户端DNS服务器，防止被上层的 DNS 污染</span><br><span class="line">   option domain-name-servers 192.168.3.1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>重新启动 DHCP 服务 <code>sudo service isc-dhcp-server restart</code></p>
+<h3 id="NAT"><a href="#NAT" class="headerlink" title="NAT"></a>NAT</h3><p>首先，修改配置文件 <code>/etc/sysctl.conf</code> 里的<code>net.ipv4.ip_forward=1</code>。要么取消注释，要么新加一行，然后 <code>sysctl -p</code> 让修改生效。</p>
+<p>然后开始要动 iptables 了。iptables 这个东西很魔幻，遇到奇怪的坑很正常。</p>
+<p>建议先 <code>sudo apt-get install iptables-persistent</code> 安装 <code>iptables-persistent</code> 来 save/reload/restart/restore 保存／重新加载／重启 iptable／重新加载配置。基本用法就是形如 <code>sudo service iptables-persistent save</code>。玩溜了之后就开始搞 NAT。规则如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">EXTIF&#x3D;&quot;p2p1&quot;</span><br><span class="line">INTIF&#x3D;&quot;eth0&quot;</span><br><span class="line">iptables -t nat -A POSTROUTING -o $EXTIF -j MASQUERADE</span><br><span class="line">iptables -A FORWARD -i $EXTIF -o $INTIF -m state --state RELATED,ESTABLISHED -j ACCEPT</span><br><span class="line">iptables -A FORWARD -i $INTIF -o $EXTIF -j ACCEPT</span><br></pre></td></tr></table></figure>
+
+<p>上面的 EXTIF 就是外网网卡，INTIF 就是内网网卡，不要搞错了。</p>
+<p>正常情况下，save 配置并重启 iptables 之后，在 192.168.3.0/24 的子网里应该就可以连通外网了。</p>
+<h2 id="DNS-解析防污染"><a href="#DNS-解析防污染" class="headerlink" title="DNS 解析防污染"></a>DNS 解析防污染</h2><p>接下来要解决 DNS 解析结果被污染的问题。这里的坑不多。</p>
+<h3 id="overture"><a href="#overture" class="headerlink" title="overture"></a>overture</h3><p>overture 是一个 Go 写的 DNS 解析器，支持中国特色社会主义的 DNS 解析。坑不大，到 github 上下载对应系统和架构的二进制包，解压出来就行了。然后把二进制程序丢到 <code>/usr/local/bin</code> 里面，顺便创建一个配置文件目录 <code>/etc/overture</code>，然后把解压出来的其他文件放到配置文件目录里去。</p>
+<p>我们的配置文件是让 overture 监听在 54 端口上，用来做 dnsmasq 的上游。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;BindAddress&quot;: &quot;:54&quot;,</span><br><span class="line">  &quot;PrimaryDNS&quot;: [</span><br><span class="line">    &#123;</span><br><span class="line">      &quot;Name&quot;: &quot;DNSPod&quot;,</span><br><span class="line">      &quot;Address&quot;: &quot;119.29.29.29:53&quot;,</span><br><span class="line">      &quot;Protocol&quot;: &quot;udp&quot;,</span><br><span class="line">      &quot;SOCKS5Address&quot;: &quot;&quot;,</span><br><span class="line">      &quot;Timeout&quot;: 6,</span><br><span class="line">      &quot;EDNSClientSubnet&quot;: &#123;</span><br><span class="line">        &quot;Policy&quot;: &quot;disable&quot;,</span><br><span class="line">        &quot;ExternalIP&quot;: &quot;&quot;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  ],</span><br><span class="line">  &quot;AlternativeDNS&quot;:[</span><br><span class="line">    &#123;</span><br><span class="line">      &quot;Name&quot;: &quot;OpenDNS&quot;,</span><br><span class="line">      &quot;Address&quot;: &quot;208.67.222.222:443&quot;,</span><br><span class="line">      &quot;Protocol&quot;: &quot;tcp&quot;,</span><br><span class="line">      &quot;SOCKS5Address&quot;: &quot;&quot;,</span><br><span class="line">      &quot;Timeout&quot;: 6,</span><br><span class="line">      &quot;EDNSClientSubnet&quot;:&#123;</span><br><span class="line">        &quot;Policy&quot;: &quot;disable&quot;,</span><br><span class="line">        &quot;ExternalIP&quot;: &quot;&quot;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      &quot;Name&quot;: &quot;google&quot;,</span><br><span class="line">      &quot;Address&quot;: &quot;8.8.8.8:53&quot;,</span><br><span class="line">      &quot;Protocol&quot;: &quot;tcp&quot;,</span><br><span class="line">      &quot;Timeout&quot;: 6,</span><br><span class="line">      &quot;MinimumTTL&quot;: 0,</span><br><span class="line">      &quot;CacheSize&quot; : 0,</span><br><span class="line">      &quot;EDNSClientSubnet&quot;:&#123;</span><br><span class="line">        &quot;Policy&quot;: &quot;enable&quot;,</span><br><span class="line">        &quot;ExternalIP&quot;: &quot;&quot;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  ],</span><br><span class="line">  &quot;OnlyPrimaryDNS&quot;: false,</span><br><span class="line">  &quot;RedirectIPv6Record&quot;: true,</span><br><span class="line">  &quot;IPNetworkFile&quot;: &quot;&#x2F;etc&#x2F;overture&#x2F;ip_network_sample&quot;,</span><br><span class="line">  &quot;DomainFile&quot;: &quot;&#x2F;etc&#x2F;overture&#x2F;domain_sample&quot;,</span><br><span class="line">  &quot;DomainBase64Decode&quot;: true,</span><br><span class="line">  &quot;HostsFile&quot;: &quot;&#x2F;etc&#x2F;overture&#x2F;hosts_sample&quot;,</span><br><span class="line">  &quot;MinimumTTL&quot;: 0,</span><br><span class="line">  &quot;CacheSize&quot; : 0,</span><br><span class="line">  &quot;RejectQtype&quot;: [255]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上面在 /etc/overture 的文件名自己对应修改。</p>
+<p>至于 overture 怎么跑起来就见仁见智了。可以做 service 启动项，只不过我习惯用 supervisor 开机启动，因为配置文件简单好写。</p>
+<p>到这里可以通过命令 <code>dig @127.0.0.1 -p 54 www.google.com</code> 看 overture 好使不。</p>
+<h3 id="dnsmasq"><a href="#dnsmasq" class="headerlink" title="dnsmasq"></a>dnsmasq</h3><p>dnsmasq 我这里仅仅用来做缓存了，没有用其他功能。</p>
+<p>先安装，<code>sudo apt-get install dnsmasq</code>。然后到 <code>/etc/dnsmasq.conf</code> 里改一发配置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"># 不读取 &#x2F;etc&#x2F;resolv.conf或者其他文件，取消注释即可，这样就可以在本文件里配置上游服务器</span><br><span class="line">no-resolv</span><br><span class="line">no-poll</span><br><span class="line"># 添加上游服务器为overture，那个#54代表端口号，千万别删了。。。。</span><br><span class="line">server&#x3D;127.0.0.1#54</span><br><span class="line"># 在所有网卡上关闭 DHCP，用不着这个功能。如果有多个网卡那么一行一个。</span><br><span class="line"># 我的DHCP是交给了别的程序</span><br><span class="line">no-dhcp-interface&#x3D;eth0</span><br><span class="line">no-dhcp-interface&#x3D;p2p1</span><br><span class="line">cache-size&#x3D;15000 # 缓存DNS的数目</span><br></pre></td></tr></table></figure>
+
+<p>重启 <code>sudo service dnsmasq restart</code></p>
+<p>这里就可以简单的通过 <code>dig www.facebook.com</code> 选择一个以前没解析过的域名来看缓存生效么，第一次应该一两百毫秒，第二次开始就应该是 1-2 毫秒了。</p>
+<h2 id="代理"><a href="#代理" class="headerlink" title="代理"></a>代理</h2><h3 id="shadowsocks"><a href="#shadowsocks" class="headerlink" title="shadowsocks"></a>shadowsocks</h3><p>之所以选择 shadowsocks（Python版） 而不是 C语言版的 shadowsocks-libev，一个是 x86 机器性能不是问题；二是 shadowsocks-libev 3.0 版以后在密码库的依赖上越走越远，导致各种依赖、编译特别麻烦；三是我这里用 redsocks 来做 tcp 到 sockv5 的转换，所以用不到 ss-redir 之类的东西。</p>
+<p>这里没什么好说的，启动一个 sslocal 就好了，也像上面一样在 supervisor 里启动。但是有个坑，似乎 DNS 的解析逻辑有问题，最好 shadowsocks 的配置文件的 server 写 IP 地址，不要写域名。</p>
+<h3 id="redsocks"><a href="#redsocks" class="headerlink" title="redsocks"></a>redsocks</h3><p>redsocks 是用来把普通的 tcp 流量转成 sockv5 的一个东西，承接 tcp 流量，转到 sslocal 里，功能和 ss-redir 一样的。</p>
+<p>先安装，<code>sudo apt-get install redsocks</code>。</p>
+<p>然后改配置文件 <code>/etc/redsocks.conf</code>，把 redsocks 部分里面的 port 改成你 sslocal 监听的地址，一般是 1080 吧。如果有奇怪的问题，可以把里面的 ip 和 local_ip 改成 0.0.0.0。</p>
+<p>UPDATE:</p>
+<p>使用过程中遇到一个问题，用着用着莫名其妙的翻不了了。看系统日志发现 redsocks 的 fd 用完，于是修改 <code>/etc/init.d/redsocks</code> 文件，在里面添加一条 <code>ulimit -n 51200</code>。并且重启 redsocks 就好了。</p>
+<h2 id="透明代理"><a href="#透明代理" class="headerlink" title="透明代理"></a>透明代理</h2><p>我的透明代理策略是国内 IP 不走代理，国外 IP 不管墙不墙都走代理。</p>
+<h3 id="ipset"><a href="#ipset" class="headerlink" title="ipset"></a>ipset</h3><p>ipset 是用来建立一个 IP 地址段的集合。用来存国内 IP 段的。</p>
+<p>先把国内 IP 段搞出来，最新版可以这么搞来</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl &#39;http:&#x2F;&#x2F;ftp.apnic.net&#x2F;apnic&#x2F;stats&#x2F;apnic&#x2F;delegated-apnic-latest&#39; | grep ipv4 | grep CN | awk -F\| &#39;&#123; printf(&quot;%s&#x2F;%d\n&quot;, $4, 32-log($5)&#x2F;log(2)) &#125;&#39; &gt; chnroute.txt</span><br></pre></td></tr></table></figure>
+
+<p>然后创建 ipset 并添加国内的 IP 段</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo ipset create chnroute hash:net</span><br><span class="line">cat chnroute.txt | sudo xargs -I ip ipset add chnroute ip</span><br></pre></td></tr></table></figure>
+
+<h3 id="iptable"><a href="#iptable" class="headerlink" title="iptable"></a>iptable</h3><p>接下来就要把流量做相应的转发了。</p>
+<p>不要无脑粘贴，看一下注释。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">iptables -t nat -N SHADOWSOCKS</span><br><span class="line"># 在 nat 表中创建新链</span><br><span class="line">iptables -t nat -A SHADOWSOCKS -p tcp --dport 23596 -j RETURN</span><br><span class="line"># 23596 是 ss 代理服务器的端口，即远程 shadowsocks 服务器提供服务的端口，如果你有多个 ip 可用,但端口一致，就设置这个</span><br><span class="line"></span><br><span class="line">iptables -t nat -A SHADOWSOCKS -d 123.456.789.111 -j RETURN</span><br><span class="line"># 123.456.789.111 是 ss 代理服务器的 ip, 如果你只有一个 ss服务器的 ip，却能选择不同端口,就设置此条</span><br><span class="line"></span><br><span class="line">iptables -t nat -A SHADOWSOCKS -d 0.0.0.0&#x2F;8 -j RETURN</span><br><span class="line">iptables -t nat -A SHADOWSOCKS -d 10.0.0.0&#x2F;8 -j RETURN</span><br><span class="line">iptables -t nat -A SHADOWSOCKS -d 127.0.0.0&#x2F;8 -j RETURN</span><br><span class="line">iptables -t nat -A SHADOWSOCKS -d 169.254.0.0&#x2F;16 -j RETURN</span><br><span class="line">iptables -t nat -A SHADOWSOCKS -d 172.16.0.0&#x2F;12 -j RETURN</span><br><span class="line">iptables -t nat -A SHADOWSOCKS -d 192.168.0.0&#x2F;16 -j RETURN</span><br><span class="line">iptables -t nat -A SHADOWSOCKS -d 224.0.0.0&#x2F;4 -j RETURN</span><br><span class="line">iptables -t nat -A SHADOWSOCKS -d 240.0.0.0&#x2F;4 -j RETURN</span><br><span class="line"># 过滤局域网段</span><br><span class="line"></span><br><span class="line">iptables -t nat -A SHADOWSOCKS -p tcp -m set --match-set chnroute dst -j RETURN</span><br><span class="line"># ipset 过滤国内 IP 段</span><br><span class="line"></span><br><span class="line">iptables -t nat -A SHADOWSOCKS -p tcp -j REDIRECT --to-ports 12345</span><br><span class="line"># 12345 是 redsocks 的监听端口</span><br><span class="line"></span><br><span class="line">iptables -t nat -I PREROUTING -p tcp -j SHADOWSOCKS</span><br><span class="line"># 在 PREROUTING 链前插入 SHADOWSOCKS 链,使其生效</span><br></pre></td></tr></table></figure>
+
+<p>然后还是用 iptables-persistent 保存配置并重启 iptables。</p>
+<p>至此就应该 OK 了，要是还有什么坑，就没法管了。</p>
+<p>至于效果嘛，现在路由翻墙可以跑满我们家百兆带宽了。</p>
+
+      </div>
+      
+      <footer class="post-footer">
+        <div class="post-tags">
+            <a href="/tags/%E7%BF%BB%E5%A2%99/">翻墙</a>
+            <a href="/tags/shadowsocks/">shadowsocks</a>
+            <a href="/tags/%E8%BD%AF%E8%B7%AF%E7%94%B1/">软路由</a>
+            </div>
+        
+        <nav class="post-nav"><a class="prev" href="/2018/03/29/Pillow%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95%E4%B9%8B%E5%9B%BE%E7%89%87%E6%B0%B4%E5%8D%B0/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">Pillow踩坑记录之图片水印</span>
+        <span class="prev-text nav-mobile">上一篇</span>
+      </a>
+    <a class="next" href="/2016/03/21/Crypto101-%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0%EF%BC%888%EF%BC%89/">
+        <span class="next-text nav-default">Crypto101 阅读笔记（8）</span>
+        <span class="prev-text nav-mobile">下一篇</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    </nav></footer>
+    </article></div><div class="comments" id="comments"><div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript" target="_blank" rel="noopener">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div></div>
+      </main>
+
+      <footer id="footer" class="footer"><div class="social-links"><a href="mailto:maemual@gmail.com" class="iconfont icon-email" title="email"></a>
+        <a href="https://twitter.com/maemual" target="_blank" rel="noopener" class="iconfont icon-twitter" title="twitter"></a>
+        <a href="https://github.com/maemual" target="_blank" rel="noopener" class="iconfont icon-github" title="github"></a>
+        <a href="https://www.zhihu.com/people/maemual" target="_blank" rel="noopener" class="iconfont icon-zhihu" title="zhihu"></a>
+        <a href="https://www.douban.com/people/maemual/" target="_blank" rel="noopener" class="iconfont icon-douban" title="douban"></a>
+        <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    </div><div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even" target="_blank" rel="noopener">Even</a>
+  </span>
+
+  <span class="copyright-year">&copy;2014 - 2020<span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">maemual</span>
+  </span>
+</div>
+</footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div><script type="text/javascript">
+    var disqus_config = function () {
+        this.page.url = 'https://0x01.io/2017/04/01/x86-%E8%BD%AF%E8%B7%AF%E7%94%B1%E9%80%8F%E6%98%8E%E4%BB%A3%E7%90%86%E6%9E%84%E5%BB%BA%E6%96%B9%E6%A1%88/';
+        this.page.identifier = '2017/04/01/x86-软路由透明代理构建方案/';
+        this.page.title = 'x86 软路由透明代理构建方案';
+    };
+    (function() {
+    var d = document, s = d.createElement('script');
+
+    s.src = '//0x01-io.disqus.com/embed.js';
+
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();  
+  </script><script type="text/javascript" src="/lib/jquery/jquery.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/src/even.js?v=2.11.0"></script>
+</body>
+</html>

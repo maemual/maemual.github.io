@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="description" content="翻墙姿势总结"/><meta name="keywords" content="翻墙, 0x01" /><meta name="google-site-verification" content="1XE4HjcRwxfqFivnUCvu3UNFTTG4dg7dvjgCPwcrxGg" /><link rel="alternate" href="/atom.xml" title="0x01"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.11.0" />
+<link rel="canonical" href="https://0x01.io/2015/05/17/翻墙姿势总结/"/>
+
+<link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css" />
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.11.0" />
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-74494566-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-74494566-1');
+</script><script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+<script>
+  window.config = {"leancloud":{"app_id":null,"app_key":null},"toc":true,"fancybox":true,"pjax":"","latex":false};
+</script>
+
+    <title>翻墙姿势总结 - 0x01</title>
+  <meta name="generator" content="Hexo 4.2.0"><link rel="alternate" href="/atom.xml" title="0x01" type="application/atom+xml">
+</head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">0x01</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list"><a href="/">
+        <li class="mobile-menu-item">首页
+          </li>
+      </a><a href="/archives/">
+        <li class="mobile-menu-item">归档
+          </li>
+      </a></ul>
+</nav>
+<div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">0x01</a>
+</div>
+
+<nav class="site-navbar"><ul id="menu" class="menu"><li class="menu-item">
+          <a class="menu-item-link" href="/">
+            首页
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            归档
+            </a>
+        </li>
+      </ul></nav>
+</header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content"><article class="post">
+    <header class="post-header">
+      <h1 class="post-title">翻墙姿势总结
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2015-05-17
+        </span></div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#host-文件"><span class="toc-text">host 文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#VPN"><span class="toc-text">VPN</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GoAgent"><span class="toc-text">GoAgent</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Shadowsocks"><span class="toc-text">Shadowsocks</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#移动端"><span class="toc-text">移动端</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#路由器"><span class="toc-text">路由器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#VPS"><span class="toc-text">VPS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-text">总结</span></a></li></ol>
+    </div>
+  </div><div class="post-content"><p>由于本人是重度的 Google 服务的死忠，不仅仅是 Google 搜索，包括 Gmail、手机的数据同步，所以不能翻墙会让我十分难受。同时，为了顺畅的获取网上的资料，避免浪费生命去等待打开 Google 或者 Stackoverflow 的时间，折腾了不少翻墙的姿势。所以，在这里会总结一下翻墙时的各种本来不需要的了解的名词，各种各样的姿势。</p>
+<a id="more"></a>
+
+<h2 id="host-文件"><a href="#host-文件" class="headerlink" title="host 文件"></a>host 文件</h2><p>最早的时候，GFW 还只是干扰一下 DNS，使得你访问某些网站的时候，获取到的 IP 地址是错误的。</p>
+<p>host 文件就是本地中的一个文件，一个域名和 IP 的对应表。当浏览器去解析一个域名时，会先从本地的 host 文件中读取。当存在的时候，就直接访问，不需要网络上的实际 DNS 请求。这样就避免了 DNS 污染。</p>
+<p>但是后来，GFW 开始在国际出口的路由器上，定向干扰某些 IP 的数据时，这招就不好使了。</p>
+<p>当然，现在有些被认证的网站，被墙的程度比较低，还可以通过此类方法解决。</p>
+<p>这个时期，也流行过类似于自由门的软件。</p>
+<h2 id="VPN"><a href="#VPN" class="headerlink" title="VPN"></a>VPN</h2><p>VPN 是一个用了很久的方案。VPN 原来是用来在公网上连接进企业内网的系统。后来，无奈之下，变成了翻墙的工具。</p>
+<p>最早的时候，大多在网上寻找免费的 VPN 方案。但是浪费了好多时间之后，大家逐渐意识到，免费的 VPN 往往不好用。不仅连接困难，网速慢，而且经常会断掉。VPN 还有个致命的问题是，他是全局的解决方案。全局的流量都会从 VPN 走。也就意味着，翻墙之后，连国内的网站会慢。但是全局有时候也有用处，比如我电脑上的某个应用程序需要翻墙的时候。或者，例如自己写的某个程序，需要调用 Twitter 的 API 之类的。</p>
+<p>VPN 常用有这么几个方案，PPTP、L2TP 和 OpenVPN，还有个 Cisco AnyConnect。其中，PPTP 最简单轻快，服务端部署简单，但是由于加密比较薄弱，在逐渐升级的 GFW 操蛋之下，经常会被干死。OpenVPN 是加密强度最高的，因为他不是通过用户名密码的，而是需要服务端生成客户端证书来认证的。但是 OpenVPN 的服务端部署还是比较复杂的。L2TP 就介于两者之间。Cisco AnyConnect 比较特殊，平时用的其实不多，但是这个是苹果设备默认支持的几种方式之一。所以随着苹果设备的流行，用的也比较多了。</p>
+<p>目前而言，网上的付费 VPN 也不是很可靠了。往往效果也不怎么样。当然，最懒的情况下，还是买付费 VPN 的操作上，最最简单。有闲功夫的，可以在自己的 VPS 上自行搭建。</p>
+<h2 id="GoAgent"><a href="#GoAgent" class="headerlink" title="GoAgent"></a>GoAgent</h2><p>提到翻墙不得不提一下 GoAgent。虽然这货现在在升级版的 GFW 干扰下，已经基本死掉了。但是还是得提一下。</p>
+<p>GoAgent 是南京大学的一个哥们写的，一个部署在 Google App Engine(GAE) 上的 Python 程序。Google App Engine 是早期 Google 的一个云应用引擎服务，用户可以把自己的程序部署在上面。由于 GAE 是 Google 自己的服务，在国外，所以不受到 GFW 的干扰。所以从 GAE 到国外的各种网站的链路是不受到干扰的。在当初，由于很多国内的企业的服务是部署在 GAE 上的，所以，从我们国内到 GAE 的服务器的网络链路当时没有受到干扰，所以我们就可以利用 GAE 做为中转站，把我们本地的数据发送到 GAE，然后 GAE 代替我们访问，获取到数据之后再传送给我们。当时 GAE 对于每个用户可以有10个免费应用，每个应用每天流量上限是1G。对于普通用户而言，是完全够用的了。详细工作原理可以参考知乎的这个<a href="http://www.zhihu.com/question/20370059/answer/14922097" target="_blank" rel="noopener">回答</a>。</p>
+<p>GoAgent 的另一个好处是，当时 GAE 的线路是支持 IPv6 访问的，所以对于很多高校，在断网、不拨号、IPv6可用的情况下，就比较赞了。</p>
+<p>GoAgent 比较常用的是2011-2012年左右吧。</p>
+<h2 id="Shadowsocks"><a href="#Shadowsocks" class="headerlink" title="Shadowsocks"></a>Shadowsocks</h2><p>到2012、2013年左右，GFW 更加丧心病狂，被墙的地址越来越多，连 GAE 的地址都被干了。所以 GoAgent 的方案已经基本死掉了。这个时候，shadowsocks 出现了。</p>
+<p>Shadowsocks 的基本工作原理也差不多，也是利用一个国内可以访问的服务器做的中转。但是现在，通常 Shadowsocks 的服务端都是部署在自己的在国外的 VPS 上。每个人都使用自己的机器，这样避免流量目标过大，被 GFW 发现干死。虽然这种情况偶尔还是会出现。但是我用了两年，暂时没遇到过这种情况。</p>
+<p>Shadowsocks 的服务端程序最初的版本是 Python 写的，后来也出现了 Go 等其他语言的版本。不过基本上大同小异。客户端程序，在各个平台上都有，在<a href="http://shadowsocks.org/en/download/clients.html" target="_blank" rel="noopener">这里</a>可以查看。从 Windows、Linux、Mac OS X，到手机端的 Android、iOS，甚至有路由器的版本。</p>
+<p>在服务端部署好 Shadowsocks 程序之后，在本机再运行一个客户端程序，这个客户端程序会和服务端进行连接。然后客户端程序会在本机启动一个 Socks V5 的代理服务。Socks 是一种代理服务，具体解释可以看<a href="https://www.wikiwand.com/zh/SOCKS" target="_blank" rel="noopener">维基百科</a>。</p>
+<p>实际在使用中，Chrome 或者 Firefox 并不能直接支持 socks 代理，所以一般会装一个插件——Proxy SwitchyOmega。这个插件会和本地的 shadowsocks 客户端进行通信，这样就实现了一个完整的链路。插件不仅仅是把请求转到代理的链路中走，而且可以起到区分国内外的作用。SwitchyOmega 在内部使用了一个列表——GFWlist。这是一个网上维护的列表，表示哪些网站被认证了，当插件发现需要访问的网站在列表中时，就可以智能的将请求转移到 Shadowsocks 代理链路中。当然，也可以自己添加需要代理请求的地址。</p>
+<p>上面说的是浏览器代理，对于本机中的其他应用程序，如果需要翻墙的话，如果这个应用程序本身就支持 socks 代理就很简单了，直接使用本机安装的 shadowsocks 客户端就可以了。如果不支持，一般来说，都是会支持 HTTP 代理的，这时，网上有些软件可以把 socks 代理转化成 HTTP 代理，例如 Privoxy 或者 Proxifier 等。</p>
+<p>实际使用的时候，如果想自己一个独享，愿意折腾一下的话，可以自己买国外的 VPS，然后自己搭建。具体方法可以参看 Shadowsocks 的官方<a href="https://github.com/shadowsocks/shadowsocks/wiki" target="_blank" rel="noopener">文档</a>。</p>
+<p>如果懒得折腾，建议就直接一年花个 100 块左右，在网上买一些别人的付费服务。例如 <a href="https://shadowsocks.com/" target="_blank" rel="noopener">shadowsocks.com</a>。首先声明，这个网站和 Shadowsocks 官方并没有关系。</p>
+<p>唉，<code>shadowsocks</code>的作者 clowwindy 被约喝茶了。被迫删除了项目代码。真是个悲伤的故事。</p>
+<h2 id="移动端"><a href="#移动端" class="headerlink" title="移动端"></a>移动端</h2><p>移动端最早的时候，也用过 GoAgent 翻墙。但是不好用。后来 Shadowsocks 流行之后，手机上基本都是装 Shadowsocks 的客户端了。</p>
+<p>Android 平台大多用 Shadowsocks 了。由于 Android 平台的开放性，装个 Shadowsocks 客户端，各种分 IP 代理、分应用代理，简直不能更爽。</p>
+<p>iOS 就比较特殊了，由于苹果的政策比较严格，Shadowsocks 程序没办法后台运行，所以，Shadowsocks 体验十分的不好。在 iOS 平台很多时候也还经常用 VPN。最常用的是 L2TP 和 Cisco AnyConnect。L2TP 由于系统自带设置，所以不需要装任何的软件，就可以直接使用。Cisco AnyConnect 体验比较好，因为可以在锁屏进入后台的状态下保持翻墙的连接，哪怕从 WiFi 转换到 3G 网络依然可以保持连接。服务端的搭建和 OpenVPN 比较相似，也挺麻烦的。但是按照正确的教程，问题也不是很大。</p>
+<p>2016 年 9 月 7 日更新：</p>
+<p>最近的一年时间里，随着 iOS 9 的发布，NetworkExtension 接口的开放，iOS 上的翻墙终于走向了正轨。最早出现，也是到目前为止依然最好用，功能最强大、最稳定、最贵、最受争议的 APP 还是 Surge。后来也出现了很多类似的 APP，例如 A.BIG.T、Shadowrocket。这类 APP 的基本原理就是利用 iOS 9 之后的 NetworkExtension 接口接管整个手机的流量，在 APP 内部内置 shadowsocks 或者其他例如 HTTPS 代理之类的客户端，通过 IP、域名、URL 等规则进行分流，实现 iOS 设备上的智能翻墙。</p>
+<h2 id="路由器"><a href="#路由器" class="headerlink" title="路由器"></a>路由器</h2><p>随着现在智能路由器的概念兴起，高性能的路由器也逐渐出现了。但是这里所谓的高性能，其实最多也就是128 MB的内存。但是相对于路由器这种设备而言就已经很高的性能了。使用路由器智能翻墙的好处就是，只要连上路由器的设备就全部实现了自动翻墙。不需要自己在设备上启动各种各样的软件。对于类似于 iOS 这类设备，翻墙不便的而言，就比较好用了。</p>
+<p>现在有很多路由器都支持刷 OpenWRT 系统。OpenWRT 简单说来就是 Linux 系统的嵌入式版本。所以可以在上面装很多东西，来实现智能翻墙。在路由器上配置翻墙的基本原理，就是在路由器上，通过 VPN 或者 Shadowsocks 建立一个到国外 VPS 的链路，然后通过网上的维护的一个 IP 地址列表，修改路由器的路由表，使得国外的走翻墙链路，国内的走普通链路。</p>
+<p>但是我个人不是很喜欢通过路由器翻墙。因为不够灵活，而且性能也不够。在路由器上配置要翻的地址，平常使用中就不是很好去修改他。</p>
+<p>2016 年 9 月 7 日更新：</p>
+<p>去年 11 月买了个华硕 AC66U 之后刷了一个自带 shadowsocks 的固件，简单的实现了路由器翻墙之后，发现幸福感提升很多。原来担心的规则不够灵活的问题并没有什么太多的体现，因为我对于国外的流量基本全部走翻墙通道。但是性能问题确实还没解决，路由器翻墙跑 Shadowsocks 我最多只能跑到 10M 的带宽，再高就性能不行了。未来也许有空的时候去折腾一下 x86 软路由，解决性能问题。</p>
+<h2 id="VPS"><a href="#VPS" class="headerlink" title="VPS"></a>VPS</h2><p>上面讲了好多 VPS，有必要介绍一下。VPS 是Virtual Private Server 虚拟专用服务器的缩写。基本的原理就是在一个物理主机上，通过 Xen 或者 KVM 技术，给你虚拟机用。在国外，本来这个服务是用来卖个小企业，他们需要服务器建网站，但是又不想自己买，然后托管在机房。是一种比较经济的方案。但是迫于国内网络环境，现在都用来翻墙了。</p>
+<p>VPS 的大的提供商，比较大，服务也比较好的是美国的 Linode，而且他有日本的节点，比较有利于国内使用。但是 Linode 原本比较贵，后来降价之后，最便宜的机器也要10美元一个月。而且日本节点也卖完了。DigitalOcean 是后起之秀，最大的优势是他的最便宜的主机，一个月只要5美元。同时，服务也很稳定。</p>
+<p>买 VPS 只要找靠谱的大牌，然后选机房就行。国际上几个地区是常用的。一个是美国西海岸，主要是旧金山，对于国内而言，比较稳定，但是由于中间隔了一个太平洋，距离摆在这，延迟通常达到200毫秒。另一个是美国东海岸，通常就是纽约，延迟更大。比较好的是日本节点。日本机房，比较可靠的是 Linode 和 vultr。但是这两个都得用信用卡美元支付，比较蛋疼。另一个比较好的选择是新加坡机房，DigitalOcean 在这里有。DigitalOcean 另一个优势就是支持 PayPal 支付，而 PayPal 是可以使用银联的。所以基本上有个国内的网银，就可以付钱了。但是 DO 的新加坡机房比较蛋疼，网络有问题，从国内的各个地区的各个运营商访问都差别很大。目前只知道江苏移动，经常延迟只有70多毫秒。另一个比较好的选择就是香港机房。但是香港由于带宽比较贵，所以通常一个月都得要好几百。太贵了。一般集体使用，或者土豪可以考虑。</p>
+<p>这是我的 DigitalOcean 的优惠链接，有需要的可以试试<a href="https://www.digitalocean.com/?refcode=3226adddd56a" target="_blank" rel="noopener">https://www.digitalocean.com/?refcode=3226adddd56a</a></p>
+<p>我现在除了备用的 DO 的 VPS 外，买了 vps.to 的香港机器，一个月99元人民币。还是有点小贵，但是还算是可以承受了。由于是香港的网络，通常都比较通畅。全国各地的速度也都不错。</p>
+<p>最近发现了一个新的 VPS，星光互联，有日本、香港和韩国节点，针对国内网络进行了优化，亲测香港节点全国 ping 值基本都小于100毫秒，速度快，最便宜的机器每个月只要60元人民币，支持支付宝付款。但是他们的机器都是通过 OpenVZ 进行虚拟化的，很多内核的东西动不了。纯翻墙用途可以考虑。<a href="http://my.starrydns.com/aff.php?aff=058" target="_blank" rel="noopener">链接</a></p>
+<p>2016 年 9 月 7 日更新：</p>
+<p>这一年的时间里折腾 VPS 起起伏伏，最终总算稳定若干月了。目前选择 VPS 只会考虑香港、日本这些距离中国近的机器，美国的一概不考虑。新加坡由于和国内网络的线路比较奇葩，只有少部分地区会效果很好，其他地方都巨渣，所以也从来都不考虑。这段时间里，尝试过 Linode 日本、vultr、阿里云香港等等，综合成本考虑，最后剩下两个方案。一个是星光互联的香港的国内线路优化机器，带宽只有 10M，流量没注意过，大概几百G吧，因为不是经常翻墙看视频，所以流量一直不是什么问题。这个机器一个月 75 元/RMB，5 个人一起合租，上面搭建的 shadowsocks 分享给了十几个朋友用，10M 带宽也没成为过问题。另一个方案是网易蜂巢的最便宜的 Docker 容器做中转，加上 shadowsocks.com 的一年 99 RMB 的帐号，选择日本 Linode 节点。网易蜂巢最便宜的镜像一个月成本大约 30 块钱，缺点是流量只有 50G。优点在于连接日本 Linode 速度非常快，我用这个方案最高跑到过 45M 的极限。平时速度比较差的时候也能在 10M 左右。</p>
+<p>经过这一年的折腾，目前翻墙的方案偏向于国内服务器中转，或者香港直连，追求稳定，追求低成本。使用场景主要是翻墙，但是视频需求少量。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>以上就是一些常用的翻墙姿势。目前最常用的是 Shadowsocks。建议花一次功夫，配置好一个可用的翻墙方案，哪怕一年付费，这样子也可以节省大量由于墙的干扰的等待时间，更加容易获取到国外的一手资料，减少被二手中文教程坑的可能。</p>
+
+      </div>
+      
+      <footer class="post-footer">
+        <div class="post-tags">
+            <a href="/tags/%E7%BF%BB%E5%A2%99/">翻墙</a>
+            </div>
+        
+        <nav class="post-nav"><a class="prev" href="/2015/06/03/CentOS7%E9%85%8D%E7%BD%AEDNS%E6%9C%8D%E5%8A%A1/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">CentOS7配置DNS服务</span>
+        <span class="prev-text nav-mobile">上一篇</span>
+      </a>
+    <a class="next" href="/2015/05/16/%E8%AE%BE%E7%BD%AE-sudo-%E5%85%8D%E5%AF%86%E7%A0%81/">
+        <span class="next-text nav-default">设置 sudo 免密码</span>
+        <span class="prev-text nav-mobile">下一篇</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    </nav></footer>
+    </article></div><div class="comments" id="comments"><div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript" target="_blank" rel="noopener">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div></div>
+      </main>
+
+      <footer id="footer" class="footer"><div class="social-links"><a href="mailto:maemual@gmail.com" class="iconfont icon-email" title="email"></a>
+        <a href="https://twitter.com/maemual" target="_blank" rel="noopener" class="iconfont icon-twitter" title="twitter"></a>
+        <a href="https://github.com/maemual" target="_blank" rel="noopener" class="iconfont icon-github" title="github"></a>
+        <a href="https://www.zhihu.com/people/maemual" target="_blank" rel="noopener" class="iconfont icon-zhihu" title="zhihu"></a>
+        <a href="https://www.douban.com/people/maemual/" target="_blank" rel="noopener" class="iconfont icon-douban" title="douban"></a>
+        <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    </div><div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even" target="_blank" rel="noopener">Even</a>
+  </span>
+
+  <span class="copyright-year">&copy;2014 - 2020<span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">maemual</span>
+  </span>
+</div>
+</footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div><script type="text/javascript">
+    var disqus_config = function () {
+        this.page.url = 'https://0x01.io/2015/05/17/%E7%BF%BB%E5%A2%99%E5%A7%BF%E5%8A%BF%E6%80%BB%E7%BB%93/';
+        this.page.identifier = '2015/05/17/翻墙姿势总结/';
+        this.page.title = '翻墙姿势总结';
+    };
+    (function() {
+    var d = document, s = d.createElement('script');
+
+    s.src = '//0x01-io.disqus.com/embed.js';
+
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();  
+  </script><script type="text/javascript" src="/lib/jquery/jquery.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/src/even.js?v=2.11.0"></script>
+</body>
+</html>

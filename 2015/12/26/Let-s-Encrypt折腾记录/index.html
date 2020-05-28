@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="description" content="Let's Encrypt折腾记录"/><meta name="keywords" content="HTTPS, Let's Encrypt, ERR_SPDY_INADEQUATE_TRANSPORT_SECURITY, 0x01" /><meta name="google-site-verification" content="1XE4HjcRwxfqFivnUCvu3UNFTTG4dg7dvjgCPwcrxGg" /><link rel="alternate" href="/atom.xml" title="0x01"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.11.0" />
+<link rel="canonical" href="https://0x01.io/2015/12/26/Let-s-Encrypt折腾记录/"/>
+
+<link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css" />
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.11.0" />
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-74494566-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-74494566-1');
+</script><script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+<script>
+  window.config = {"leancloud":{"app_id":null,"app_key":null},"toc":true,"fancybox":true,"pjax":"","latex":false};
+</script>
+
+    <title>Let's Encrypt折腾记录 - 0x01</title>
+  <meta name="generator" content="Hexo 4.2.0"><link rel="alternate" href="/atom.xml" title="0x01" type="application/atom+xml">
+</head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">0x01</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list"><a href="/">
+        <li class="mobile-menu-item">首页
+          </li>
+      </a><a href="/archives/">
+        <li class="mobile-menu-item">归档
+          </li>
+      </a></ul>
+</nav>
+<div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">0x01</a>
+</div>
+
+<nav class="site-navbar"><ul id="menu" class="menu"><li class="menu-item">
+          <a class="menu-item-link" href="/">
+            首页
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            归档
+            </a>
+        </li>
+      </ul></nav>
+</header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content"><article class="post">
+    <header class="post-header">
+      <h1 class="post-title">Let's Encrypt折腾记录
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2015-12-26
+        </span></div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#创建帐号"><span class="toc-text">创建帐号</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#创建-CSR-文件"><span class="toc-text">创建 CSR 文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#配置验证服务"><span class="toc-text">配置验证服务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#获取网站证书"><span class="toc-text">获取网站证书</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ERR-SPDY-INADEQUATE-TRANSPORT-SECURITY"><span class="toc-text">ERR_SPDY_INADEQUATE_TRANSPORT_SECURITY</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#配置自动更新"><span class="toc-text">配置自动更新</span></a></li></ol>
+    </div>
+  </div><div class="post-content"><p>久闻 Let’s Encrypt 的大名，一直没抽出空来折腾一下。刚好昨天看到下面这篇文章，晚上就折腾了一下。以下内容全部遵循这篇文章<a href="https://imququ.com/post/letsencrypt-certificate.html" target="_blank" rel="noopener"><code>Let&#39;s Encrypt，免费好用的 HTTPS 证书</code></a>的教程，在有些我自己遇到的坑的地方，做了一些修改和提醒。</p>
+<h2 id="创建帐号"><a href="#创建帐号" class="headerlink" title="创建帐号"></a>创建帐号</h2><p>首先创建一个目录，例如 <code>/home/xxx/ssl</code>，用来存放各种临时文件和最后的证书文件。进入这个目录，创建一个 RSA 私钥用于 Let’s Encrypt 识别你的身份：</p>
+<blockquote>
+<p>openssl genrsa 4096 &gt; account.key</p>
+</blockquote>
+<h2 id="创建-CSR-文件"><a href="#创建-CSR-文件" class="headerlink" title="创建 CSR 文件"></a>创建 CSR 文件</h2><p>接着就可以生成 CSR（Certificate Signing Request，证书签名请求）文件了。在之前的目录中，再创建一个域名私钥（一定不要使用上面的账户私钥）：</p>
+<blockquote>
+<p>openssl genrsa 4096 &gt; domain.key</p>
+</blockquote>
+<p>PS：这里是创建了 4096 位的证书，为了一定的兼容性，我创建的是 2048 位的证书。</p>
+<p>生成 CSR 时推荐至少把域名带 www 和不带 www 的两种情况都加进去，其它子域可以根据需要添加（目前一张证书最多可以包含 100 个域名）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl req -new -sha256 -key domain.key -subj &quot;&#x2F;&quot; -reqexts SAN -config &lt;(cat &#x2F;etc&#x2F;ssl&#x2F;openssl.cnf &lt;(printf &quot;[SAN]\nsubjectAltName&#x3D;DNS:yoursite.com,DNS:www.yoursite.com&quot;)) &gt; domain.csr</span><br></pre></td></tr></table></figure>
+
+<p>执行这一步时，如果提示找不到 <code>/etc/ssl/openssl.cnf</code> 文件，应该是没有安装 <code>openssl</code> 库。</p>
+<h2 id="配置验证服务"><a href="#配置验证服务" class="headerlink" title="配置验证服务"></a>配置验证服务</h2><p>我们知道，CA 在签发 DV（Domain Validation）证书时，需要验证域名所有权。传统 CA 的验证方式一般是往 <code>admin@yoursite.com</code> 发验证邮件，而 Let’s Encrypt 是在你的服务器上生成一个随机验证文件，再通过创建 CSR 时指定的域名访问，如果可以访问则表明你对这个域名有控制权。</p>
+<p>首先创建用于存放验证文件的目录，例如：</p>
+<blockquote>
+<p>mkdir /home/xxx/www/challenges/</p>
+</blockquote>
+<p>PS：这里一定要开辟另外的一个目录，千万不要和上面的 ssl 的目录放在一起。因为这个目录下的文件会开发的互联网给别人访问的，如果也放在 ssl 目录下，你的一些私钥会被人扫描到的。</p>
+<p>然后配置一个 HTTP 服务，以 Nginx 为例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    server_name www.yoursite.com yoursite.com;</span><br><span class="line"></span><br><span class="line">    location &#x2F;.well-known&#x2F;acme-challenge&#x2F; &#123;</span><br><span class="line">        alias &#x2F;home&#x2F;xxx&#x2F;www&#x2F;challenges&#x2F;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个验证服务以后更新证书还要用到，需要一直保留。</p>
+<h2 id="获取网站证书"><a href="#获取网站证书" class="headerlink" title="获取网站证书"></a>获取网站证书</h2><p>先把 acme-tiny 脚本保存到之前的 <code>ssl</code> 目录：</p>
+<blockquote>
+<p>wget <a href="https://raw.githubusercontent.com/diafygi/acme-tiny/master/acme_tiny.py" target="_blank" rel="noopener">https://raw.githubusercontent.com/diafygi/acme-tiny/master/acme_tiny.py</a></p>
+</blockquote>
+<p>指定账户私钥、CSR 以及验证目录，执行脚本：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python acme_tiny.py --account-key .&#x2F;account.key --csr .&#x2F;domain.csr --acme-dir &#x2F;home&#x2F;xxx&#x2F;www&#x2F;challenges&#x2F; &gt; .&#x2F;signed.crt</span><br></pre></td></tr></table></figure>
+
+<p>如果一切正常，当前目录下就会生成一个 <code>signed.crt</code>，这就是申请好的证书文件。<br>如果你把域名 DNS 解析放在国内，这一步很可能会遇到类似这样的错误：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ValueError: Wrote file to &#x2F;home&#x2F;xxx&#x2F;www&#x2F;challenges&#x2F;oJbvpIhkwkBGBAQUklWJXyC8VbWAdQqlgpwUJkgC1Vg, but couldn&#39;t download http:&#x2F;&#x2F;www.yoursite.com&#x2F;.well-known&#x2F;acme-challenge&#x2F;oJbvpIhkwkBGBAQUklWJXyC8VbWAdQqlgpwUJkgC1Vg</span><br></pre></td></tr></table></figure>
+
+<p>这是因为你的域名很可能在国外无法访问，可以找台国外 VPS 验证下。我的域名最近从 DNSPod 换到了阿里云解析，最后又换到了 <code>CloudXNS</code>，就是因为最近前两家在国外都很不稳定。如果你也遇到了类似情况，可以暂时使用国外的 DNS 解析服务商。</p>
+<p>搞定网站证书后，还要下载 Let’s Encrypt 的中间证书。我在之前的文章中讲过，配置 HTTPS 证书时既不要漏掉中间证书，也不要包含根证书。在 Nginx 配置中，需要把中间证书和网站书合在一起：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">wget -O - https:&#x2F;&#x2F;letsencrypt.org&#x2F;certs&#x2F;lets-encrypt-x1-cross-signed.pem &gt; intermediate.pem</span><br><span class="line">cat signed.crt intermediate.pem &gt; chained.pem</span><br></pre></td></tr></table></figure>
+
+<p>最终，修改 Nginx 中有关证书的配置并 reload 服务即可：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ssl_certificate     &#x2F;home&#x2F;xxx&#x2F;ssl&#x2F;chained.pem;</span><br><span class="line">ssl_certificate_key &#x2F;home&#x2F;xxx&#x2F;ssl&#x2F;domain.key;</span><br></pre></td></tr></table></figure>
+
+<h2 id="ERR-SPDY-INADEQUATE-TRANSPORT-SECURITY"><a href="#ERR-SPDY-INADEQUATE-TRANSPORT-SECURITY" class="headerlink" title="ERR_SPDY_INADEQUATE_TRANSPORT_SECURITY"></a>ERR_SPDY_INADEQUATE_TRANSPORT_SECURITY</h2><p>到了这一步，nginx 重新 reload 应该可以来着，但是我用浏览器访问的时候遇到了这样的错误。可能和我使用了 1.9.7 版本的 Nginx 有关。</p>
+<p>解决方案是需要加上 <code>ssl_prefer_server_ciphers</code> 和 <code>ssl_ciphers</code> 这样的东西。ssl_ciphers 有各种各样的版本，复杂的、简单的，复杂的一般都是为了保持尽可能多的兼容性的情况下的安全性。我使用的是 <a href="https://mozilla.github.io/server-side-tls/ssl-config-generator/" target="_blank" rel="noopener">Mozilla SSL Configuration Generator</a> 中的 Intermediate 的配置。也有诸如 <a href="https://github.com/cloudflare/sslconfig/blob/master/conf" target="_blank" rel="noopener">CloudFlare</a> 的简单配置。</p>
+<p>隐去一些自己的信息的 Nginx 配置如下。开启 http2 需要较新版的 Nginx 1.9.x 才行。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">        listen 443 http2;</span><br><span class="line">        ssl on;</span><br><span class="line"></span><br><span class="line">        server_name youdomain.com www.yourdomain.com;</span><br><span class="line">        ssl_certificate     &#x2F;home&#x2F;xxx&#x2F;ssl&#x2F;chained.pem;</span><br><span class="line">        ssl_certificate_key &#x2F;home&#x2F;xxx&#x2F;ssl&#x2F;domain.key;</span><br><span class="line"></span><br><span class="line">        ssl_protocols TLSv1 TLSv1.1 TLSv1.2;</span><br><span class="line">        ssl_ciphers &#39;ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:ECDHE-RSA-DES-CBC3-SHA:ECDHE-ECDSA-DES-CBC3-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:AES:CAMELLIA:DES-CBC3-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!aECDH:!EDH-DSS-DES-CBC3-SHA:!EDH-RSA-DES-CBC3-SHA:!KRB5-DES-CBC3-SHA&#39;;</span><br><span class="line">        ssl_prefer_server_ciphers   on;</span><br><span class="line">        add_header Strict-Transport-Security max-age&#x3D;2592000;  # HSTS 特性自选</span><br><span class="line"></span><br><span class="line">        location &#x2F;.well-known&#x2F;acme-challenge&#x2F; &#123;</span><br><span class="line">                alias &#x2F;home&#x2F;xxx&#x2F;www&#x2F;challenges&#x2F;;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">server &#123;</span><br><span class="line">        listen 80;</span><br><span class="line">        server_name yourdomain.com www.yourdomain.com;</span><br><span class="line">        return 301 https:&#x2F;&#x2F;yourdomain.com$request_uri;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="配置自动更新"><a href="#配置自动更新" class="headerlink" title="配置自动更新"></a>配置自动更新</h2><p>Let’s Encrypt 签发的证书只有 90 天有效期，但可以通过脚本定期更新。例如我创建了一个 renew_cert.sh，内容如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">#!&#x2F;bin&#x2F;bash</span><br><span class="line"></span><br><span class="line">cd &#x2F;home&#x2F;xxx&#x2F;ssl&#x2F;</span><br><span class="line">python acme_tiny.py --account-key account.key --csr domain.csr --acme-dir &#x2F;home&#x2F;xxx&#x2F;www&#x2F;challenges&#x2F; &gt; signed.crt || exit</span><br><span class="line">wget -O - https:&#x2F;&#x2F;letsencrypt.org&#x2F;certs&#x2F;lets-encrypt-x1-cross-signed.pem &gt; intermediate.pem</span><br><span class="line">cat signed.crt intermediate.pem &gt; chained.pem</span><br><span class="line">service nginx reload</span><br></pre></td></tr></table></figure>
+
+<p>这个脚本需要以 root 帐号运行，使用绝对路径比较保险。最后，修改 root 帐号的 crontab 配置，加入以下内容：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0 0 1 * * &#x2F;home&#x2F;xxx&#x2F;root_shell&#x2F;renew_cert.sh &gt;&#x2F;dev&#x2F;null 2&gt;&amp;1</span><br></pre></td></tr></table></figure>
+
+<p>这样以后证书每个月都会自动更新，一劳永逸。</p>
+
+      </div>
+      
+      <footer class="post-footer">
+        <div class="post-tags">
+            <a href="/tags/HTTPS/">HTTPS</a>
+            <a href="/tags/Let-s-Encrypt/">Let's Encrypt</a>
+            <a href="/tags/ERR-SPDY-INADEQUATE-TRANSPORT-SECURITY/">ERR_SPDY_INADEQUATE_TRANSPORT_SECURITY</a>
+            </div>
+        
+        <nav class="post-nav"><a class="prev" href="/2016/02/28/shadowsocks-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">shadowsocks 源码阅读</span>
+        <span class="prev-text nav-mobile">上一篇</span>
+      </a>
+    <a class="next" href="/2015/11/30/DNS%E3%80%81DNSSEC%E3%80%81Anycast%E5%92%8CBGP/">
+        <span class="next-text nav-default">DNS、DNSSEC、Anycast和BGP</span>
+        <span class="prev-text nav-mobile">下一篇</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    </nav></footer>
+    </article></div><div class="comments" id="comments"><div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript" target="_blank" rel="noopener">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div></div>
+      </main>
+
+      <footer id="footer" class="footer"><div class="social-links"><a href="mailto:maemual@gmail.com" class="iconfont icon-email" title="email"></a>
+        <a href="https://twitter.com/maemual" target="_blank" rel="noopener" class="iconfont icon-twitter" title="twitter"></a>
+        <a href="https://github.com/maemual" target="_blank" rel="noopener" class="iconfont icon-github" title="github"></a>
+        <a href="https://www.zhihu.com/people/maemual" target="_blank" rel="noopener" class="iconfont icon-zhihu" title="zhihu"></a>
+        <a href="https://www.douban.com/people/maemual/" target="_blank" rel="noopener" class="iconfont icon-douban" title="douban"></a>
+        <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    </div><div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even" target="_blank" rel="noopener">Even</a>
+  </span>
+
+  <span class="copyright-year">&copy;2014 - 2020<span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">maemual</span>
+  </span>
+</div>
+</footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div><script type="text/javascript">
+    var disqus_config = function () {
+        this.page.url = 'https://0x01.io/2015/12/26/Let-s-Encrypt%E6%8A%98%E8%85%BE%E8%AE%B0%E5%BD%95/';
+        this.page.identifier = '2015/12/26/Let-s-Encrypt折腾记录/';
+        this.page.title = 'Let's Encrypt折腾记录';
+    };
+    (function() {
+    var d = document, s = d.createElement('script');
+
+    s.src = '//0x01-io.disqus.com/embed.js';
+
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();  
+  </script><script type="text/javascript" src="/lib/jquery/jquery.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/src/even.js?v=2.11.0"></script>
+</body>
+</html>

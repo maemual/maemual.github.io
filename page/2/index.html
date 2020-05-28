@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="description" content="Go home or stand up, it's your fucking choice"/><meta name="google-site-verification" content="1XE4HjcRwxfqFivnUCvu3UNFTTG4dg7dvjgCPwcrxGg" /><link rel="alternate" href="/atom.xml" title="0x01"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.11.0" />
+<link rel="canonical" href="https://0x01.io/page/2/"/>
+
+<link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css" />
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.11.0" />
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-74494566-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-74494566-1');
+</script><script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+<script>
+  window.config = {"leancloud":{"app_id":null,"app_key":null},"toc":true,"fancybox":true,"pjax":"","latex":false};
+</script>
+
+    <title>0x01</title>
+  <meta name="generator" content="Hexo 4.2.0"><link rel="alternate" href="/atom.xml" title="0x01" type="application/atom+xml">
+</head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">0x01</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list"><a href="/">
+        <li class="mobile-menu-item">首页
+          </li>
+      </a><a href="/archives/">
+        <li class="mobile-menu-item">归档
+          </li>
+      </a></ul>
+</nav>
+<div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">0x01</a>
+</div>
+
+<nav class="site-navbar"><ul id="menu" class="menu"><li class="menu-item">
+          <a class="menu-item-link" href="/">
+            首页
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            归档
+            </a>
+        </li>
+      </ul></nav>
+</header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content"><section id="posts" class="posts"><article class="post">
+    <header class="post-header">
+      <h1 class="post-title"><a class="post-link" href="/2016/03/06/Crypto101-%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0%EF%BC%884%EF%BC%89/">Crypto101 阅读笔记（4）</a>
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2016-03-06
+        </span></div>
+    </header>
+
+    <div class="post-content"><h2 id="公钥加密"><a href="#公钥加密" class="headerlink" title="公钥加密"></a>公钥加密</h2><p>公开密钥加密（public-key cryptography），也称为非对称加密（asymmetric cryptography）。在这种方法中，需要一对密钥，一个是私钥，另一个是公钥。这两个密钥是数学相关，用某用户密钥加密后所得的信息，只能用该用户的解密密钥才能解密。如果知道了其中一个，并不能计算出另外一个。因此如果公开了一对密钥中的一个，并不会危害到另外一个的秘密性质。称公开的密钥为公钥；不公开的密钥为私钥。</p>
+<p>最早公开的公钥加密算法，也同时是至今依然最常用的就是 RSA。</p>
+<p>事实上有三类算法和公钥加密相关，一个是前面说到的密钥交换算法，二个就是 RSA 这种加密算法，三个是数字签名算法。</p>
+<p>为什么一直使用 RSA 来加密，还一定要使用前面提到的 AES 之类的对称密钥加密？是因为 RSA 比 AES 之类的对称密钥加密，要慢上几百上千倍。</p>
+<h3 id="RSA"><a href="#RSA" class="headerlink" title="RSA"></a>RSA</h3><p>首先随机选择两个大质数 $p$ 和 $q$，然后把他们相乘，得到 $N$，这个是可以公开的。然后再选择一个加密指数 $e$，这个通常是 3 或者 65537，这个指数是公开的。然后 $(N, e)$ 组合就是公钥。使用公钥将明文 M 加密成密文 C 过程如下：</p>
+<p>$$C \equiv M^e ; (\bmod N)$$</p>
+<p>对于解密的过程，你需要一个解密指数 $d$。利用 $p$ 和 $q$ 很容易计算出 $d$。这个过程涉及到一定的数学理论。解密过程如下：</p>
+<p>$$M \equiv C^d ; (\bmod N)$$</p>
+<p>RSA 的安全性建立在 $d$ 很难被逆向计算出来。</p>
+<p>对于 RSA 的攻击，从理论上而言，由于尚未发现多项式时间里能够分解质因数的方法，所以还是安全的。但是量子计算机的出现，增加了从量子算法上破解 RSA 的可能。目前常见的破解方式还是实现上。比如 Python 的一个叫 Salt 的库，由于使用加密指数 $e$ 为 1，就导致了 $C = M$ 的情况。</p>
+<p>目前通过暴力的方式破解 RSA 达到了 768 位，大大威胁了 1024 bit 密钥的安全性。所以目前推荐密钥至少要有 2048 位。</p>
+
+        </div></article>
+      <article class="post">
+    <header class="post-header">
+      <h1 class="post-title"><a class="post-link" href="/2016/03/05/Crypto101-%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0%EF%BC%883%EF%BC%89/">Crypto101 阅读笔记（3）</a>
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2016-03-05
+        </span></div>
+    </header>
+
+    <div class="post-content"><h2 id="Diffie-Hellman-密钥交换"><a href="#Diffie-Hellman-密钥交换" class="headerlink" title="Diffie-Hellman 密钥交换"></a>Diffie-Hellman 密钥交换</h2><p>在前一篇流加密里面介绍到，加密解密的双方需要有一个 key，需要保证不能泄露这个 key。那么双方要如何在不泄露的情况下都知道这个 key 呢。</p>
+<p>Diffie-Hellman 密钥交换算法就是为了解决，通信双方，在一个不安全的通信环境里，在双方互相不认识的情况下，最终能协商出一个只有双方知道的值。</p>
+<p>在这里恭喜 Diffie 和 Hellman 两人，前两天刚凭借这个密钥交换算法获得了 2015 年度的图灵奖。</p>
+<p>Diffie-Hellman 最核心的思想就是利用某些某个方向计算很容易，但是反反向计算非常难的数学。</p>
+<h3 id="数学解释"><a href="#数学解释" class="headerlink" title="数学解释"></a>数学解释</h3><p>首先，对于 $y \equiv g^x \quad (\bmod p)$ 这个等式中，知道 g、x、p 是很容易计算出 y 来的。但是知道 y、g、p 的情况下，算出 x 来却十分困难。所以，利用这个等式，我们就可以构建一个密钥协商的过程。</p>
+<p>首先，通信的双方 Alice 和 Bob 分别选择一个随机数 $r_A$ 和 $r_B$，然后分别计算他们自己的：</p>
+<p>$$ m_A = g^{r_A} \quad (\bmod p)$$</p>
+<p>$$ m_B = g^{r_B} \quad (\bmod p)$$</p>
+<p>然后 Alice 和 Bob 分别把自己算出来的 $m_A$ 和 $m_B$ 发送给对方。在这个发送的过程中，所有的通信数据都可以被 Eve 看到。所以 Eve 是知道 $m_A$ 和 $m_B$ 的。但是由于反方向计算十分困难，所以 Eve 无法反推出 $r_A$ 和 $r_B$。</p>
+<p>Alice 和 Bob 分别接收到对方的 $m_B$ 和 $m_A$ 后。在对方发过来的数据的基础上，带入自己的随机数，例如对于 Bob 会计算：</p>
+<p>$$ S = (g^{r_A}) ^ {r_B} \quad (\bmod p) $$</p>
+<p>对于 Alice 会计算：</p>
+<p>$$ S = (g^{r_B}) ^ {r_A} \quad (\bmod p) $$</p>
+<p>尽管计算顺序不一样，但是最后的结果是一样的，$(g^{r_B}) ^ {r_A} \quad (\bmod p) = (g^{r_A}) ^ {r_B} \quad (\bmod p)$。这个 S 就是最后协商的密钥。</p>
+<h3 id="椭圆曲线"><a href="#椭圆曲线" class="headerlink" title="椭圆曲线"></a>椭圆曲线</h3><p>Diffie-Hellman 还可以利用椭圆曲线（Elliptic curve），就是所说的 ECDH。</p>
+<p>椭圆曲线密码学（ECC），基于椭圆曲线数学，作为程序员的我并不能看懂。</p>
+<p>ECC 相比较而言的优势在于获得相同的安全性的时候，相对于上面的基于离散对数的方式，所需要的 key 的长度更小，所以计算速度会更快。</p>
+<h3 id="中间人攻击"><a href="#中间人攻击" class="headerlink" title="中间人攻击"></a>中间人攻击</h3><p>Diffie-Hellman 算法并不能识别交换双方的身份。所以在交换密钥的过程中，可能会被中间人攻击。比如 Mallory 在 Alice 和 Bob 中间，分别和 Alice、Bob 进行密钥交换，那么 Mallory 还是可以分别得到两个人的 key。</p>
+<p>为了解决这个问题，需要引入证书体系，将在后面介绍。</p>
+
+        </div></article>
+      <article class="post">
+    <header class="post-header">
+      <h1 class="post-title"><a class="post-link" href="/2016/03/05/Crypto101-%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0%EF%BC%882%EF%BC%89/">Crypto101 阅读笔记（2）</a>
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2016-03-05
+        </span></div>
+    </header>
+
+    <div class="post-content"><h2 id="流加密"><a href="#流加密" class="headerlink" title="流加密"></a>流加密</h2><p>流加密（Stream Cipher）是对称密钥加密算法的一种，用来加密比特流。</p>
+<p>流加密算法有两种，一种是利用块加密算法，利用某种工作模式，加密比特流；另一种从设计就是为了比特流考虑的算法。</p>
+<h3 id="ECB-模式"><a href="#ECB-模式" class="headerlink" title="ECB 模式"></a>ECB 模式</h3><p>利用前一篇里面的块加密算法，很容易构想出一个原始简单的流加密算法。就是把比特流分割成一个个的具有块大小的数据块，然后对每一块分别使用块加密算法进行加密。</p>
+<p>这种方式叫做 ECB（Electronic Code Book mode） 模式。这种加密模式最大的问题是相同的原明文块会被转变成相同的加密块。</p>
+<h3 id="CBC-模式"><a href="#CBC-模式" class="headerlink" title="CBC 模式"></a>CBC 模式</h3><p>CBC 模式，Cipher Block Chining。CBC 模式就是明文数据块在加密之前会和前一个加密过得到的密文块进行异或运算。这个模式的问题是第一个明文块，没有前一个加密块。所以要引入一个 IV（Initialization Vector），初始化向量作为最初的加密块使用。IV 必须随机，不可预测，但没必要加密，重要的是不可预测。</p>
+<p><img src="https://dn-0x01-io.qbox.me/CBC_encryption.png" alt="CBC_encryption"></p>
+<p><img src="https://dn-0x01-io.qbox.me/CBC_decryption.png" alt="CBC_decryption.png"></p>
+<p>与 CBC 模式很相似的模式还有 CFB 和 OFB 模式。</p>
+<h3 id="CBC-模式下基于可预测-IV-的攻击"><a href="#CBC-模式下基于可预测-IV-的攻击" class="headerlink" title="CBC 模式下基于可预测 IV 的攻击"></a>CBC 模式下基于可预测 IV 的攻击</h3><p>在 AES 系统中，IV 通常都是可以从密文 C 中读到的。</p>
+<p>一种常用的 AESCipher 的 Python 实现如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"><span class="keyword">from</span> Crypto.Cipher <span class="keyword">import</span> AES</span><br><span class="line"><span class="keyword">from</span> Crypto <span class="keyword">import</span> Random</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">AESCipher</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">( self, key )</span>:</span></span><br><span class="line">        self.key = key</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">encrypt</span><span class="params">( self, raw )</span>:</span></span><br><span class="line">        raw = pad(raw)</span><br><span class="line">        iv = Random.new().read( AES.block_size )</span><br><span class="line">        cipher = AES.new( self.key, AES.MODE_CBC, iv )</span><br><span class="line">        <span class="keyword">return</span> base64.b64encode( iv + cipher.encrypt( raw ) ) </span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">decrypt</span><span class="params">( self, enc )</span>:</span></span><br><span class="line">        enc = base64.b64decode(enc)</span><br><span class="line">        iv = enc[:<span class="number">16</span>]</span><br><span class="line">        cipher = AES.new(self.key, AES.MODE_CBC, iv )</span><br><span class="line">        <span class="keyword">return</span> unpad(cipher.decrypt( enc[<span class="number">16</span>:] ))</span><br></pre></td></tr></table></figure>
+
+<p>其中 IV 都是可以直接知道的。但是 IV 可知并不是什么问题，主要的问题是，IV 要不可被预知。</p>
+<p>假设某条加密过的数据 $C_1$ 的 IV 是 $IV_a$ 可知，针对我们即将输入进去的数据的 IV 我们可预知，即 $IV_m$，我们可构造明文数据 $P_m = IV_m \oplus IV_a \oplus G$，其中，G 是我们猜测的 C1 的原文。</p>
+<p>然后由 </p>
+<p>$$<br>C_m = E(k, IV_m \oplus P_m) \<br>= E(k, IV_m \oplus(IV_m \oplus IV_a \oplus G)) \<br>= E(k, IV_a \oplus G)<br>$$</p>
+<p>这里通过比较 $C_m$ 和 $C_1$，可以验证对于 $C_1$ 猜测的原文 G 是否正确。</p>
+<h3 id="CBC-模式下把-key-用作-IV-的攻击"><a href="#CBC-模式下把-key-用作-IV-的攻击" class="headerlink" title="CBC 模式下把 key 用作 IV 的攻击"></a>CBC 模式下把 key 用作 IV 的攻击</h3><p>把 key 用作 IV 是不安全的。</p>
+<p>假设 Alice 的明文 P 包含三个 block，分别为 $P_1 P_2 P_3$，在 CBC 模式下用 key 加密，并且 IV 也是 key。得到的密文 C 为 $C_1 C_2 C_3$ 发送给了 Bob。</p>
+<p>在 Bob 接收到密文之前，Mallory 截获了密文。然后把密文篡改成 $C^{‘} = C_1ZC_1$，其中 Z 是全 0 的一个块。当 Bob 接收到被篡改过的密文并解密 $C^{‘}$ 之后，得到三个明文串 $P^{‘}_1$、$P^{‘}_2$ 和 $P^{‘}_3$。</p>
+<p>$$P^{‘}_1 = D(k, C_1) \oplus IV = D(k, C_1) \oplus k = P_1 $$</p>
+<p>$$P^{‘}_2 = D(k, Z) \oplus C_1 = R$$</p>
+<p>$$P^{‘}_3 = D(k, C_1) \oplus Z = D(k, C_1) = P_1 \oplus IV$$</p>
+<p>其中 R 是一个无所谓的串。</p>
+<p>到此，Mallory 在得知 $P^{‘}_1$、$P^{‘}_2$ 和 $P^{‘}_3$ 的情况下，就可以推算出 IV，由于 key 就是 IV，所以就推算出了 key。</p>
+<p>到这里我有个疑惑，Mallory 是怎么得知 $P^{‘}_1$、$P^{‘}_2$ 和 $P^{‘}_3$。然后发现书中这样的一句话 “Under the chosen-ciphertext attack assumption”。这句话的意思是，攻击者可以通过给定某一个特定的密文 C 给解密者并且获得对应解密后的明文结果。通常是利用解密端软件的某些 bug 或者漏洞。所以这里 Mallory 是可以拿到对应的 $P^{‘}_1$、$P^{‘}_2$ 和 $P^{‘}_3$ 的。所以说，这种漏洞的利用还是比较难的。</p>
+<h3 id="Padding"><a href="#Padding" class="headerlink" title="Padding"></a>Padding</h3><p>Padding 就是填充的意思。</p>
+<p>在 CBC 模式下，假设了每个加密块都是块加密算法的 block size 大小。但事实上，真正的数据流的长度是不定的。那么对于最后一块数据，长度不足一个 block 时候，就需要在末尾填充一些其他数据来满足长度要求。这个就是 Padding。</p>
+<p>最简单的思维是，填充某个固定的字节，例如 0。问题是，无法区分填充字节和原来的数据。</p>
+<p>更好，更常用的方法是 PKCS#5/PKCS#7。基本思想是，对于后面少几个字节，就把几全部填充进去。例如一个 8 个字节的 block，原始数据是 12 34 45，差 5 个字节。那么就填充成 12 34 45 05 05 05 05 05。当某个数据刚好是 block 的整数倍，不需要填充时，则在最后面填充一整个 block。</p>
+<h3 id="CBC-Padding-attack"><a href="#CBC-Padding-attack" class="headerlink" title="CBC Padding attack"></a>CBC Padding attack</h3><p>使用 Padding attack 只需要两点，一段需要解密的密文 $C_i$，和一个可以响应 Padding 是否合法的目标程序。这里假设填充方法是上面说的 PKCS#5/PKCS#7。</p>
+<p>首先攻击者构造一个随机串 $R = r_1,r_2,r_3…r_b$。然后，攻击者不停的尝试随机串 $R$ 的最后一个字符 $r_b$，目的是得到一个填充合法的结果。最差的情况是使得最后的明文串 $P_i$ 的最后一位 $P_b$ 是 01。根据上述 PKCS 的填充原理，01 必然是一个合法的填充结果。</p>
+<p><img src="https://dn-0x01-io.qbox.me/CBC_Padding_attack.png" alt="CBC_Padding_attack.png"></p>
+<p>这时我们得到填充合法的结果，我们有此时的随机串 $R$。但是并不知道填充的位数。但是可以知道的是，$P_i$ 的末尾必然是 </p>
+<ul>
+<li>$01$</li>
+<li>$02\ 02$</li>
+<li>$03\ 03\ 03$</li>
+<li>… 这些情况。</li>
+</ul>
+<p>当然，从概率上而言，结尾是 $01$ 的可能性最大。</p>
+<p>这里，我们假设最后的明文 $P_i = p_0p_1p_2p_3p_4030303$，其中 $p_0p_1p_2p_3p_4$ 是什么并不会影响我们进行填充正确性的检验。</p>
+<p>所以我们从 $r_0$ 开始尝试变动，这样会导致最后的 $P_i = p^{‘}_0p_1p_2p_3p_4030303$。但是这样并不会影响我们进行填充正确性的检验。所以我们可以继续变动下一位 $r_1$，这样一直下去，直到填充正确性检验失败，我们就可以知道有多少位的填充 padding。从实际工作角度，我们或许没必要猜测是几位。我们就假定末尾是 01。当填充正确性检验通过的时候，我们不知道最后实际是几位，但是我们只需要变动一下倒数第二位，一旦校验失败，则说明 Padding 一定不是 01，这时我们不管他，继续尝试 $r_0$，直到能说明 Pading 是 01 为止。</p>
+<p>接下来，我们假设最后的填充是 $01$，这是最坏的情况。</p>
+<p>那么就有 $D(C_i)[b] \oplus r_b = 01$，这样我们可以计算出 $D(C_i)[b]$，即$C_i$被算法 D 解密之后的中间结果的最后一位。要注意这个中间结果，我们做这么多，目的就是这个中间结果，这个中间结果是不会变动的。</p>
+<p>接下来我们去尝试倒数第二位。首先，根据上面的等式，我们可以推出 $D(C_i)[b] \oplus r_b  \oplus 01 \oplus 02 = 01 \oplus 01 \oplus 02 = 02$，也就是让 $r_b = r_b  \oplus 01 \oplus 02$，这时最后的填充位就变成了 02，这样，我们去暴力尝试 R 的倒数第二位，使得最后填充检验通过。这时，我们就可以得到$D(C_i)[b-1]$，也就是这个中间结果的倒数第二位。不断重复这个过程，我们可以得到整个中间结果串 $D(C_i)$。</p>
+<p>这时，我们拿出密文 $C_i$ 的前一个密文串 $C_{i-1}$，根据 CBC 的工作模式，这里 $C_{i-1} \oplus C_i = P_i$。就这样，我们得到了解密后的结果 $P_i$。然后重复整个过程，我们可以解出所有的明文，除了第一块，因为我们不知道 IV。</p>
+<h3 id="RC4"><a href="#RC4" class="headerlink" title="RC4"></a>RC4</h3><p>RC4，十分简单，但是已经被攻破。而且很快，13.9 cycles/bit。AES-128 CTR 模式是 12.6 cycles/bit，CBC 模式是 16 cycles/bit。</p>
+<h3 id="Salsa20"><a href="#Salsa20" class="headerlink" title="Salsa20"></a>Salsa20</h3><p>Salsa20 是一种新的流加密算法。目前有两个版本，Salsa20/12 和 Salsa20/8。其中 12 和 8 表示循环次数，从原始的 20 降下来。与 Salsa20 相似的还有 ChaCha。</p>
+<p>Salsa20 和 ChaCha 都非常快。</p>
+<p>Salsa20 有个特点就是可以从任意一段进行加密解密。意味着算法可以并行。</p>
+<h3 id="CTR-模式"><a href="#CTR-模式" class="headerlink" title="CTR 模式"></a>CTR 模式</h3><p>CTR 模式，也叫 counter 模式。</p>
+<p>工作流程很简单，一个初始化的随机数 N，然后 N 和一个计数器连起来。和 key 加密后产生 key stream 再和明文 P 异或产生密文 C。每加密一块后计数器就加一。循环往复。</p>
+<p><img src="https://dn-0x01-io.qbox.me/CTR_encryption.png" alt="CTR_encryption.png"></p>
+<p><img src="https://dn-0x01-io.qbox.me/CTR_decryption.png" alt="CTR_decryption.png"></p>
+<p>和 Salsa20 一样，可以从任意一段开始，也就是可以并行。</p>
+
+        </div></article>
+      <article class="post">
+    <header class="post-header">
+      <h1 class="post-title"><a class="post-link" href="/2016/03/04/Crypto101-%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0%EF%BC%881%EF%BC%89/">Crypto101 阅读笔记（1）</a>
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2016-03-04
+        </span></div>
+    </header>
+
+    <div class="post-content"><p>Crypto101 是作为非数学专业，入门现代密码学不错的学习资料。本阅读笔记系列主要以一个程序员的视角来看待现代密码学。Crypto101 原文可以从官网下载到 <a href="https://www.crypto101.io/" target="_blank" rel="noopener">www.crypto101.io</a>。</p>
+<h2 id="异或"><a href="#异或" class="headerlink" title="异或"></a>异或</h2><p>异或$\oplus$操作是密码学中非常重要的一个运算。</p>
+<p>基本运算规则如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">0⊕0&#x3D;0 </span><br><span class="line">1⊕0&#x3D;1 </span><br><span class="line">0⊕1&#x3D;1 </span><br><span class="line">1⊕1&#x3D;0</span><br></pre></td></tr></table></figure>
+
+<p>通过以上可以推出一些常用的其他规律：</p>
+<ol>
+<li>异或运算可以任何顺序 $a \oplus b = b \oplus a$，即交换律</li>
+<li>自己异或自己都是 0</li>
+<li>任何比特异或 0 的结果都还是自己</li>
+</ol>
+<p>通过上述规律，可以推导出 $a \oplus b \oplus a = b$。通过这个原则，可以认为 a 异或 b 是加密过程，再异或 a 就是解密过程。</p>
+<p>完美的加密模式是，明文的每个比特都和一个真随机的比特 key 进行异或。但是这样缺点也很明显，key 会和明文一样长。</p>
+<h2 id="块加密"><a href="#块加密" class="headerlink" title="块加密"></a>块加密</h2><p>块加密（Block Cipher）即分组加密算法，允许对固定长度的块进行加密。</p>
+<p>它使用加密函数 E，通过密钥 k 可以使得明文 P 变成密文 C：</p>
+<p>$$ C = E(k, P) $$</p>
+<p>明文和密文都是字节序列，这两者通常都拥有相同的长度，并且是被块加密算法规定好的一个长度，叫做块大小（block size）。所有可能的 key 被称为 keyspace，即键空间。</p>
+<p>解密的过程相反，使用解密函数 D，通过和上面加密时一样的密钥 k 和密文 C，可以获得明文 P：</p>
+<p>$$ P = D(k, C) $$</p>
+<p>目前最常用的块加密算法是 AES。</p>
+
+        </div></article>
+      <article class="post">
+    <header class="post-header">
+      <h1 class="post-title"><a class="post-link" href="/2016/02/28/shadowsocks-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/">shadowsocks 源码阅读</a>
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2016-02-28
+        </span></div>
+    </header>
+
+    <div class="post-content"><p>本周末花了点时间阅读了一下 <a href="https://github.com/shadowsocks/shadowsocks" target="_blank" rel="noopener">shadowsocks</a> 2.8.1 版和 <a href="https://github.com/shadowsocks/shadowsocks-go" target="_blank" rel="noopener">shadowsocks-go</a> 1.1.4 版的源码。</p>
+<p>原本工作原理是知道的，这里通过阅读源码，增加了对 eventloop 的网络模型和 Go 语言的 goroutine 模型的认知。两者比较起来，Python 版代码不记测试共计 4000 余行，Go 版本包括测试一共才 2000 多行代码。当然，主要原因是 Go 版本功能要少一点，比如 UDP 的支持，和 TCP Fast Open 特性支持。从理解上而言，Go 版本要远远好于 Python 版本。</p>
+<h2 id="基本原理"><a href="#基本原理" class="headerlink" title="基本原理"></a>基本原理</h2><p><code>shadowsocks</code> 的基本工作原理并不复杂。shadowsocks 包括 local 和 server 两个程序。local 运行在用户自己的机器上，server 运行在墙外的服务器上。正常工作模式下，local 通常会监听本地 1080 端口，提供 socks v5 协议接口。在用户本机进程和 local 的 1080 端口建立 TCP 连接之后，首先会发送一个 hello 包，或者叫 handshake 握手包。local 程序接收到这个包之后，进行简单的包数据检查之后就返回一个确认包。本机进程收到确认的包之后，会再发送一个请求包，包的主要内容就是目标服务的地址和端口号。local 程序接收到请求包之后，会和 server 程序建立一个 TCP 连接，连接建立之后会把上面的目标服务的地址和端口号传给 server。这个连接是穿墙的关键，连接里面传输的数据都是经过加密的，最常用的就是 aes-256-cfb。local 程序会对请求包返回一个确认的包。然后本机进程就开始向 local 传输实际的数据，local 接收到之后加密继续传给 server。server 接收到之后把数据解密出来，然后和目标服务建立 TCP 连接，并把解密后的数据发送出去。然后接收数据就是上述的反过来。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">                                        great firewall</span><br><span class="line">                                             +</span><br><span class="line">                                             |</span><br><span class="line">                                             |</span><br><span class="line">                    +----------+             |            +-----------+</span><br><span class="line">                    |          |             |            |           |</span><br><span class="line">   socks5           |  local   |    encryption            |  server   |   raw data</span><br><span class="line">&lt;------------&gt; 1080 |          | &lt;-----------+----------&gt; |           | &lt;-----------&gt;</span><br><span class="line">                    |          |             |            |           |</span><br><span class="line">                    |          |             |            |           |</span><br><span class="line">                    |          |             |            |           |</span><br><span class="line">                    |          |             |            |           |</span><br><span class="line">                    |          |             |            |           |</span><br><span class="line">                    |          |             |            |           |</span><br><span class="line">                    |          |             |            |           |</span><br><span class="line">                    |          |             |            |           |</span><br><span class="line">                    |          |             |            |           |</span><br><span class="line">                    |          |             |            |           |</span><br><span class="line">                    |          |             |            |           |</span><br><span class="line">                    |          |             |            |           |</span><br><span class="line">                    +----------+             |            +-----------+</span><br><span class="line">                                             |</span><br><span class="line">                                             |</span><br><span class="line">                                             |</span><br><span class="line">                                             +</span><br></pre></td></tr></table></figure>
+<p>为了理解以上内容，强烈建议阅读一下 socks v5 协议的 <a href="https://www.ietf.org/rfc/rfc1928.txt" target="_blank" rel="noopener">RFC 1928</a>。不长，一共才 9 页，定义的包格式也很少。</p>
+<h2 id="shadowsocks"><a href="#shadowsocks" class="headerlink" title="shadowsocks"></a>shadowsocks</h2><p>shadowsocks Python 版本主要包括 Eventloop、TCPRelay、UDPRelay 和 DNSResolver 这几个模块。我们主要介绍 TCP 的模式，UDP 不做过多介绍。</p>
+<p>shadowsocks 主要的工作流程就是先进行配置处理，然后针对每个需要监听的端口建立一个 TCPRelay 和 UDPRelay，并添加到 eventloop 里。然后启动 eventloop 的循环。当 eventloop 接收到事件时，将事件分发，调用对应的 handle_event 进行处理。对于每个建立的客户端发起的 TCP 连接，都会新建一个 TCPRelayHandler 进行处理。</p>
+<p>在这里，local 和 server 使用的是同一个 TCPRelay 类，他们的处理流程都统一了起来。但是就是因为如此，代码的理解上反而显的不是那么清晰。</p>
+<h3 id="Eventloop"><a href="#Eventloop" class="headerlink" title="Eventloop"></a>Eventloop</h3><p>shadowsocks 最早期的版本是基于线程的模型处理并发连接的。由于种种原因，线程模型在频繁建立连接、高并发的情况下效率并不高。现在的版本是基于 eventloop 的处理模型。shadowsocks 里使用的 eventloop 是基于 epoll 模型的封装，把 select 和 kqueue 都封装成了 epoll 模型的接口。</p>
+<p>eventloop 最重要的方法 run 里的逻辑，就是典型的 epoll 处理方式。这里强烈建议去理解一下 epoll 的工作模型。这里很简单，接收到 event 之后，调用对应的 handle_event 方法进行处理。</p>
+<h3 id="TCPRelay"><a href="#TCPRelay" class="headerlink" title="TCPRelay"></a>TCPRelay</h3><p>TCPRelay 里有个概念就是 <code>_server_socket</code>，表示的是监听端口的 socket。然后看 TCPRelay 的 handle_event 逻辑就分为了两块，如果是 <code>_server_socket</code>，那么就只有客户端请求建立连接的事件，<code>_server_socket</code> 负责 accept 之后创建新的 TCPRelayHandler；如果不是，那么说明是客户端连接的读写事件，直接分发到对应的 TCPRelayHandler 调用 handle_event 进行处理。</p>
+<p>在 <code>tcprelay.py</code> 这个文件最上方，有一段注释是描述的客户端连接建立的全部过程。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"># as sslocal:</span><br><span class="line"># stage 0 SOCKS hello received from local, send hello to local</span><br><span class="line"># stage 1 addr received from local, query DNS for remote</span><br><span class="line"># stage 2 UDP assoc</span><br><span class="line"># stage 3 DNS resolved, connect to remote</span><br><span class="line"># stage 4 still connecting, more data from local received</span><br><span class="line"># stage 5 remote connected, piping local and remote</span><br><span class="line"></span><br><span class="line"># as ssserver:</span><br><span class="line"># stage 0 just jump to stage 1</span><br><span class="line"># stage 1 addr received from local, query DNS for remote</span><br><span class="line"># stage 3 DNS resolved, connect to remote</span><br><span class="line"># stage 4 still connecting, more data from local received</span><br><span class="line"># stage 5 remote connected, piping local and remote</span><br></pre></td></tr></table></figure>
+
+<p>在 TCPRelayHandler 里，就是按照如下定义的 stage 的流程运行的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">STAGE_INIT &#x3D; 0</span><br><span class="line">STAGE_ADDR &#x3D; 1</span><br><span class="line">STAGE_UDP_ASSOC &#x3D; 2</span><br><span class="line">STAGE_DNS &#x3D; 3</span><br><span class="line">STAGE_CONNECTING &#x3D; 4</span><br><span class="line">STAGE_STREAM &#x3D; 5</span><br><span class="line">STAGE_DESTROYED &#x3D; -1</span><br></pre></td></tr></table></figure>
+
+<p>先看 handle_event，里面的逻辑分成了 remote_sock 和 local_sock 两部分。先从 local_sock 开始。从客户端建立 TCP 连接之后，TCPRelayHandler 创建的时候，local_sock 就存在了，由于是客户端主动建立的连接，数据也都是客户端先发起的，所以先从 local_sock 的可读事件开始。记住，我们目前处于 STAGE_INIT 状态。在进入<code>_on_local_read</code>之后，紧守着<code>is_local</code>和<code>_stage</code>两个变量，就可以按照上面基本原理里面说的工作流程，将状态机运行起来了。</p>
+<p>eventloop 模型比较让人讨厌的就是要不停的循环，然后进入各自的 handle_event 里去思考流程，比较麻烦。</p>
+<h2 id="shadowsocks-go"><a href="#shadowsocks-go" class="headerlink" title="shadowsocks-go"></a>shadowsocks-go</h2><p>我们再来看看 Go 语言版本基于 goroutine 协程模型。</p>
+<p>Go 语言版本的 local 和 server 也是十分相似的。</p>
+<p>以 local 程序开始介绍。从 main 开始，处理各种配置的问题；然后到 run 运行起来，建立服务端的 socket，监听端口，循环接收来自客户端的连接请求；然后调用 handleConnection，并建立 goroutine，处理该连接的所有逻辑；在 handleConnection 里，所有逻辑就十分的简单了，全部是同步的方式，从上到下，一步一步的，最后建立上行和下行的两个 PipeThenClose。</p>
+<p>main 就没什么好说的了，就是初始化配置，各种参数检查，然后跳到 run 开始运行。run 里面最主要的就是一个 for 的无限循环，不停的 accept 连接，然后 <code>go handleConnection(conn)</code> 开启新的 goroutine 协程并发的执行。</p>
+<p>handleConnection 的逻辑分为 4 块。第一块就是到 handShake，无非就是按照 socks v5 协议要求接收一个包，返回一个包。第二块是到 getRequest，这里也是按照 socks v5 协议要求，接收一个包，这个包里主要的内容就是目标服务的地址和端口号。第三块是到 createServerConn，这里返回的 remote 是一个和远端的 server 建立的连接，是一个 <code>ss.Conn</code> 的类型，这个 Conn 类型是在标准库 net.Conn interface 的基础上进行的封装，实现了 Read 和 Write 接口。自己实现的 Read 接口会从 src 读数据之后并解密后返回，Write 接口会把数据加密后写入到 socket 中。最后第四块就是两个 PipeThenClose，自己这个 goroutine 和新开启的 goroutine 并发的从本地到远端、远端到本地的上下行的数据传输。</p>
+<p>server 的执行流程和上述也是一样的，main 里面处理配置之后到 run 开始执行。run 里面无限循环接收请求，建立连接，然后<code>go handleConnection(ss.NewConn(conn, cipher.Copy()))</code> 开启新的 goroutine。需要注意的是这里传入的是 <code>ss.Conn</code> 类型的客户端连接，他的 Read 和 Write 接口是有解密和加密的逻辑的。handleConnection 方法的逻辑也十分相似了，除了没有第一步的握手阶段。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>总得看来，shadowsocks 并不复杂。Python 版本的 eventloop 和 Go 版本的 goroutine，两种模型相比较，个人觉得 goroutine 明显更加容易理解。</p>
+<p>在理解上述内容之前，需要读者对于 socket 编程、epoll 模型、socks v5 的协议内容和 Go 语言要有一定的了解。</p>
+
+        </div></article>
+      <article class="post">
+    <header class="post-header">
+      <h1 class="post-title"><a class="post-link" href="/2015/12/26/Let-s-Encrypt%E6%8A%98%E8%85%BE%E8%AE%B0%E5%BD%95/">Let's Encrypt折腾记录</a>
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2015-12-26
+        </span></div>
+    </header>
+
+    <div class="post-content"><p>久闻 Let’s Encrypt 的大名，一直没抽出空来折腾一下。刚好昨天看到下面这篇文章，晚上就折腾了一下。以下内容全部遵循这篇文章<a href="https://imququ.com/post/letsencrypt-certificate.html" target="_blank" rel="noopener"><code>Let&#39;s Encrypt，免费好用的 HTTPS 证书</code></a>的教程，在有些我自己遇到的坑的地方，做了一些修改和提醒。</p>
+<h2 id="创建帐号"><a href="#创建帐号" class="headerlink" title="创建帐号"></a>创建帐号</h2><p>首先创建一个目录，例如 <code>/home/xxx/ssl</code>，用来存放各种临时文件和最后的证书文件。进入这个目录，创建一个 RSA 私钥用于 Let’s Encrypt 识别你的身份：</p>
+<blockquote>
+<p>openssl genrsa 4096 &gt; account.key</p>
+</blockquote>
+<h2 id="创建-CSR-文件"><a href="#创建-CSR-文件" class="headerlink" title="创建 CSR 文件"></a>创建 CSR 文件</h2><p>接着就可以生成 CSR（Certificate Signing Request，证书签名请求）文件了。在之前的目录中，再创建一个域名私钥（一定不要使用上面的账户私钥）：</p>
+<blockquote>
+<p>openssl genrsa 4096 &gt; domain.key</p>
+</blockquote>
+<p>PS：这里是创建了 4096 位的证书，为了一定的兼容性，我创建的是 2048 位的证书。</p>
+<p>生成 CSR 时推荐至少把域名带 www 和不带 www 的两种情况都加进去，其它子域可以根据需要添加（目前一张证书最多可以包含 100 个域名）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl req -new -sha256 -key domain.key -subj &quot;&#x2F;&quot; -reqexts SAN -config &lt;(cat &#x2F;etc&#x2F;ssl&#x2F;openssl.cnf &lt;(printf &quot;[SAN]\nsubjectAltName&#x3D;DNS:yoursite.com,DNS:www.yoursite.com&quot;)) &gt; domain.csr</span><br></pre></td></tr></table></figure>
+
+<p>执行这一步时，如果提示找不到 <code>/etc/ssl/openssl.cnf</code> 文件，应该是没有安装 <code>openssl</code> 库。</p>
+<h2 id="配置验证服务"><a href="#配置验证服务" class="headerlink" title="配置验证服务"></a>配置验证服务</h2><p>我们知道，CA 在签发 DV（Domain Validation）证书时，需要验证域名所有权。传统 CA 的验证方式一般是往 <code>admin@yoursite.com</code> 发验证邮件，而 Let’s Encrypt 是在你的服务器上生成一个随机验证文件，再通过创建 CSR 时指定的域名访问，如果可以访问则表明你对这个域名有控制权。</p>
+<p>首先创建用于存放验证文件的目录，例如：</p>
+<blockquote>
+<p>mkdir /home/xxx/www/challenges/</p>
+</blockquote>
+<p>PS：这里一定要开辟另外的一个目录，千万不要和上面的 ssl 的目录放在一起。因为这个目录下的文件会开发的互联网给别人访问的，如果也放在 ssl 目录下，你的一些私钥会被人扫描到的。</p>
+<p>然后配置一个 HTTP 服务，以 Nginx 为例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    server_name www.yoursite.com yoursite.com;</span><br><span class="line"></span><br><span class="line">    location &#x2F;.well-known&#x2F;acme-challenge&#x2F; &#123;</span><br><span class="line">        alias &#x2F;home&#x2F;xxx&#x2F;www&#x2F;challenges&#x2F;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个验证服务以后更新证书还要用到，需要一直保留。</p>
+<h2 id="获取网站证书"><a href="#获取网站证书" class="headerlink" title="获取网站证书"></a>获取网站证书</h2><p>先把 acme-tiny 脚本保存到之前的 <code>ssl</code> 目录：</p>
+<blockquote>
+<p>wget <a href="https://raw.githubusercontent.com/diafygi/acme-tiny/master/acme_tiny.py" target="_blank" rel="noopener">https://raw.githubusercontent.com/diafygi/acme-tiny/master/acme_tiny.py</a></p>
+</blockquote>
+<p>指定账户私钥、CSR 以及验证目录，执行脚本：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python acme_tiny.py --account-key .&#x2F;account.key --csr .&#x2F;domain.csr --acme-dir &#x2F;home&#x2F;xxx&#x2F;www&#x2F;challenges&#x2F; &gt; .&#x2F;signed.crt</span><br></pre></td></tr></table></figure>
+
+<p>如果一切正常，当前目录下就会生成一个 <code>signed.crt</code>，这就是申请好的证书文件。<br>如果你把域名 DNS 解析放在国内，这一步很可能会遇到类似这样的错误：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ValueError: Wrote file to &#x2F;home&#x2F;xxx&#x2F;www&#x2F;challenges&#x2F;oJbvpIhkwkBGBAQUklWJXyC8VbWAdQqlgpwUJkgC1Vg, but couldn&#39;t download http:&#x2F;&#x2F;www.yoursite.com&#x2F;.well-known&#x2F;acme-challenge&#x2F;oJbvpIhkwkBGBAQUklWJXyC8VbWAdQqlgpwUJkgC1Vg</span><br></pre></td></tr></table></figure>
+
+<p>这是因为你的域名很可能在国外无法访问，可以找台国外 VPS 验证下。我的域名最近从 DNSPod 换到了阿里云解析，最后又换到了 <code>CloudXNS</code>，就是因为最近前两家在国外都很不稳定。如果你也遇到了类似情况，可以暂时使用国外的 DNS 解析服务商。</p>
+<p>搞定网站证书后，还要下载 Let’s Encrypt 的中间证书。我在之前的文章中讲过，配置 HTTPS 证书时既不要漏掉中间证书，也不要包含根证书。在 Nginx 配置中，需要把中间证书和网站书合在一起：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">wget -O - https:&#x2F;&#x2F;letsencrypt.org&#x2F;certs&#x2F;lets-encrypt-x1-cross-signed.pem &gt; intermediate.pem</span><br><span class="line">cat signed.crt intermediate.pem &gt; chained.pem</span><br></pre></td></tr></table></figure>
+
+<p>最终，修改 Nginx 中有关证书的配置并 reload 服务即可：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ssl_certificate     &#x2F;home&#x2F;xxx&#x2F;ssl&#x2F;chained.pem;</span><br><span class="line">ssl_certificate_key &#x2F;home&#x2F;xxx&#x2F;ssl&#x2F;domain.key;</span><br></pre></td></tr></table></figure>
+
+<h2 id="ERR-SPDY-INADEQUATE-TRANSPORT-SECURITY"><a href="#ERR-SPDY-INADEQUATE-TRANSPORT-SECURITY" class="headerlink" title="ERR_SPDY_INADEQUATE_TRANSPORT_SECURITY"></a>ERR_SPDY_INADEQUATE_TRANSPORT_SECURITY</h2><p>到了这一步，nginx 重新 reload 应该可以来着，但是我用浏览器访问的时候遇到了这样的错误。可能和我使用了 1.9.7 版本的 Nginx 有关。</p>
+<p>解决方案是需要加上 <code>ssl_prefer_server_ciphers</code> 和 <code>ssl_ciphers</code> 这样的东西。ssl_ciphers 有各种各样的版本，复杂的、简单的，复杂的一般都是为了保持尽可能多的兼容性的情况下的安全性。我使用的是 <a href="https://mozilla.github.io/server-side-tls/ssl-config-generator/" target="_blank" rel="noopener">Mozilla SSL Configuration Generator</a> 中的 Intermediate 的配置。也有诸如 <a href="https://github.com/cloudflare/sslconfig/blob/master/conf" target="_blank" rel="noopener">CloudFlare</a> 的简单配置。</p>
+<p>隐去一些自己的信息的 Nginx 配置如下。开启 http2 需要较新版的 Nginx 1.9.x 才行。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">        listen 443 http2;</span><br><span class="line">        ssl on;</span><br><span class="line"></span><br><span class="line">        server_name youdomain.com www.yourdomain.com;</span><br><span class="line">        ssl_certificate     &#x2F;home&#x2F;xxx&#x2F;ssl&#x2F;chained.pem;</span><br><span class="line">        ssl_certificate_key &#x2F;home&#x2F;xxx&#x2F;ssl&#x2F;domain.key;</span><br><span class="line"></span><br><span class="line">        ssl_protocols TLSv1 TLSv1.1 TLSv1.2;</span><br><span class="line">        ssl_ciphers &#39;ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:ECDHE-RSA-DES-CBC3-SHA:ECDHE-ECDSA-DES-CBC3-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:AES:CAMELLIA:DES-CBC3-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!aECDH:!EDH-DSS-DES-CBC3-SHA:!EDH-RSA-DES-CBC3-SHA:!KRB5-DES-CBC3-SHA&#39;;</span><br><span class="line">        ssl_prefer_server_ciphers   on;</span><br><span class="line">        add_header Strict-Transport-Security max-age&#x3D;2592000;  # HSTS 特性自选</span><br><span class="line"></span><br><span class="line">        location &#x2F;.well-known&#x2F;acme-challenge&#x2F; &#123;</span><br><span class="line">                alias &#x2F;home&#x2F;xxx&#x2F;www&#x2F;challenges&#x2F;;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">server &#123;</span><br><span class="line">        listen 80;</span><br><span class="line">        server_name yourdomain.com www.yourdomain.com;</span><br><span class="line">        return 301 https:&#x2F;&#x2F;yourdomain.com$request_uri;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="配置自动更新"><a href="#配置自动更新" class="headerlink" title="配置自动更新"></a>配置自动更新</h2><p>Let’s Encrypt 签发的证书只有 90 天有效期，但可以通过脚本定期更新。例如我创建了一个 renew_cert.sh，内容如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">#!&#x2F;bin&#x2F;bash</span><br><span class="line"></span><br><span class="line">cd &#x2F;home&#x2F;xxx&#x2F;ssl&#x2F;</span><br><span class="line">python acme_tiny.py --account-key account.key --csr domain.csr --acme-dir &#x2F;home&#x2F;xxx&#x2F;www&#x2F;challenges&#x2F; &gt; signed.crt || exit</span><br><span class="line">wget -O - https:&#x2F;&#x2F;letsencrypt.org&#x2F;certs&#x2F;lets-encrypt-x1-cross-signed.pem &gt; intermediate.pem</span><br><span class="line">cat signed.crt intermediate.pem &gt; chained.pem</span><br><span class="line">service nginx reload</span><br></pre></td></tr></table></figure>
+
+<p>这个脚本需要以 root 帐号运行，使用绝对路径比较保险。最后，修改 root 帐号的 crontab 配置，加入以下内容：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0 0 1 * * &#x2F;home&#x2F;xxx&#x2F;root_shell&#x2F;renew_cert.sh &gt;&#x2F;dev&#x2F;null 2&gt;&amp;1</span><br></pre></td></tr></table></figure>
+
+<p>这样以后证书每个月都会自动更新，一劳永逸。</p>
+
+        </div></article>
+      <article class="post">
+    <header class="post-header">
+      <h1 class="post-title"><a class="post-link" href="/2015/11/30/DNS%E3%80%81DNSSEC%E3%80%81Anycast%E5%92%8CBGP/">DNS、DNSSEC、Anycast和BGP</a>
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2015-11-30
+        </span></div>
+    </header>
+
+    <div class="post-content"><h2 id="DNS"><a href="#DNS" class="headerlink" title="DNS"></a>DNS</h2><p>本文属于 DNS 相关的进阶文章，需要读者对 DNS 的基础有所了解。基础文章可以看看<a href="http://selfboot.cn/2015/11/05/dns_theory/" target="_blank" rel="noopener">这篇</a>。</p>
+<h2 id="DNSSEC"><a href="#DNSSEC" class="headerlink" title="DNSSEC"></a>DNSSEC</h2><p>DNSSEC（Domain Name System Security Extensions）是 DNS 协议的一个安全性拓展。其地位就相当于 HTTPS 于 HTTP。DNS 系统设计的时候，网络规模还很小，没有考虑到现在复杂的安全性问题。所以 DNS 的数据很容易被篡改。</p>
+<h3 id="中间人攻击"><a href="#中间人攻击" class="headerlink" title="中间人攻击"></a>中间人攻击</h3><p>中间人攻击在中国是一种十分常见的 DNS 攻击技术。被某防火墙广泛应用。</p>
+<p><img src="https://dn-0x01-io.qbox.me/dns-image01.jpg" alt="Man-in-the-middle attacks"></p>
+<p>中间人攻击很容易理解，就是在用户的解析器和域名的解析服务器之间，有一个中间人，他会抢在解析服务器返回结果之前，抢先把一个错误的假结果伪装成原 DNS 请求的返回结果，然后由于 DNS 协议的缺陷，解析器会认为收到的第一个结果就是真的，抛弃后续收到的返回。</p>
+<h3 id="DNS-投毒"><a href="#DNS-投毒" class="headerlink" title="DNS 投毒"></a>DNS 投毒</h3><p>DNS 投毒是促使 DNSSEC 标准尽快推进的一个动力。</p>
+<p><img src="https://dn-0x01-io.qbox.me/dns-image03.jpg" alt="DNS poisoning"></p>
+<p>由于 DNS 通常都是基于无连接的 UDP 协议的，并且由于上面说的，DNS 解析器会认为接收到的第一个结果就是真实的，而抛弃后续的结果。所以，DNS 投毒就是利用一大批的肉鸡，向解析器发送伪装的假结果，让解析器误把假结果当作是正确的返回。从而使得诱导用户访问到错误的地方。</p>
+<h3 id="Resource-Records"><a href="#Resource-Records" class="headerlink" title="Resource Records"></a>Resource Records</h3><p>Resource Records 也就是所谓的资源记录，用于表示 DNS 请求的哪种类型的资源。其中最常用的是以下几种：</p>
+<table>
+<thead>
+<tr>
+<th>记录类型</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>A</td>
+<td>主机的 IPv4 地址记录</td>
+</tr>
+<tr>
+<td>AAAA</td>
+<td>主机的 IPv6 地址记录</td>
+</tr>
+<tr>
+<td>CNAME</td>
+<td>一个域名的别名</td>
+</tr>
+<tr>
+<td>MX</td>
+<td>域名的邮件域记录</td>
+</tr>
+<tr>
+<td>NS</td>
+<td>域名的权威解析服务器的地址</td>
+</tr>
+</tbody></table>
+<h3 id="DNSSEC-加密"><a href="#DNSSEC-加密" class="headerlink" title="DNSSEC 加密"></a>DNSSEC 加密</h3><p>DNSSEC 为了保证请求结果的正确性，是通过对请求的资源记录使用非对称加密算法进行加密，然后把公钥放到 DNS 的请求结果中，私钥由权威解析服务器自己保留。然后解析器在拿到结果的时候，使用拿到的公钥，解密出 DNS 请求，来确认结果的正确性。为了实现这样的目的，DNSSEC 增加了几种资源记录：</p>
+<table>
+<thead>
+<tr>
+<th>记录类型</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>DNSKEY</td>
+<td>非对称加密算法中的公钥</td>
+</tr>
+<tr>
+<td>DS</td>
+<td>权威服务器使用的私钥的 hash</td>
+</tr>
+<tr>
+<td>RRSIG</td>
+<td>使用私钥对资源记录加密过的数据</td>
+</tr>
+<tr>
+<td>KSK</td>
+<td>用于解开 DNSKEY 资源记录使用的公钥</td>
+</tr>
+<tr>
+<td>ZSK</td>
+<td>用于解开其他资源记录使用的公钥</td>
+</tr>
+</tbody></table>
+<h3 id="信任链"><a href="#信任链" class="headerlink" title="信任链"></a>信任链</h3><p>那么 DNSSEC 具体是如何利用上面的几种资源记录工作的呢。</p>
+<p><img src="https://dn-0x01-io.qbox.me/dns-image00.jpg" alt="DNSSEC"></p>
+<p>这是一个工作的信任链。假如我需要请求 example.com 的 A 记录，也就是想拿到它的  IPv4 地址。那么在 DNSSEC 体系中，我肯定需要拿到这个 A 记录的 RRSIG，也就是加密过的数据用于比较。为了解开这个加密过的数据，我肯定是得拿公钥。而在 DNSSEC 中，除了DNSKEY 公钥本身，其他资源记录都是使用 ZSK 进行加密的。所以这里我们需要拿到 ZSK 记录。同样的道理啊，ZSK 也是一种资源记录，和前面的 A 记录一样，为了保证我拿到的 ZSK 也是可信的，没有被篡改过的，我也得拿 DNSKEY ZSK 记录的 RRSIG，也就是加密数据。为了解开这个加密数据，我又得拿非对称加密算法中的公钥，这里我们为了解开 KEY，所以我们需要拿的就是 KSK 了。只要拿到这么些个数据，我们就可以解开所有被非对称加密算法加密过的数据，然后确保所有的数据的正确性了。</p>
+<p>但是，这个 KSK 记录如何保证它的真实性呢？这里我们就不能继续在 example.com 的权威服务器里解决了，这里无法构成信任链，成了一个死循环。所以我们要请求 example.com 的上一层权威服务器，也就是 .com 的权威服务器，请求 example.com 的 KSK 的 hash 值，也就是上面提到的 DS 资源记录。通过比较这个 hash 值，我们就可以确定这个 KSK 的正确性。</p>
+<p>当然，为了能够请求到正确的，未被篡改的 DS 记录，我们又得重复上述的过程，请求 DS 记录的 RRSIG 加密数据。 这样不断的重复上述过程，最终我们会如上图一样，一路走到根服务器，请求根服务器的 KSK。这样，信任链就走到根服务器的 KSK 记录了。而，全球十几个根服务器的 KSK 记录，是公开的，所有人都知道的，无法被篡改的，可信的。就这样，我们的信任链就建立起来了。</p>
+<h2 id="Anycast"><a href="#Anycast" class="headerlink" title="Anycast"></a>Anycast</h2><p>Anycast 中文叫任播。其特性就是分布在全球的不同的服务器，使用同一个 IP 地址，然后通过动态路由协议，使得用户的请求会被路由到距离他们最近的一个服务器上去。通常用于实现 Public DNS 和 CDN。</p>
+<p>Public DNS 就是我们经常见到的例如 114.114.114.114，或者 8.8.8.8 之类的 DNS 解析服务器。特点就是在全球各地，ping 这些服务器的延迟都非常低，都在几毫秒到三十几毫秒之间。</p>
+<p>Anycast 就这么简单，全球各地部署多个机房，每个对外服务的机器都是用同一个 IP 地址，然后通过动态路由协议使得用户的请求可以被送到距离他们最近的服务器上去。</p>
+<h2 id="BGP"><a href="#BGP" class="headerlink" title="BGP"></a>BGP</h2><p>到这里我们来讲讲上面 Anycast 中，是如何实现动态路由，使得用户的请求可以被路由到最近的服务器上去的。</p>
+<h3 id="自治系统"><a href="#自治系统" class="headerlink" title="自治系统"></a>自治系统</h3><p>自治系统(AS)是指在一个实体管辖下的所有网络。通常比如中国电信是一个自治系统，中国联通是一个自治系统，阿里云的所有服务器是一个自治系统。</p>
+<h3 id="边界网关协议"><a href="#边界网关协议" class="headerlink" title="边界网关协议"></a>边界网关协议</h3><p>BGP 就是边界网关协议，用于在自治系统间进行路由的协议。在自治系统内部，通常使用 RIP 和 OSPF 进行动态路由。RIP 由于历史原因，已经基本被 OSPF 替代。</p>
+<p>现实的互联网，其实是两层网络组成的。我们平常接触到的网络是属于一个自治系统，是一个网状的结构。然后我们上一层，也就是在自治系统外，又有一个网络，也就是所谓的骨干网。</p>
+<p>BGP 面对的就是一个个的自治系统之间的路由问题。BGP 是一种基于 TCP 协议的动态路由协议，他通过启动时和周围的其他 BGP 邻居建立 TCP 连接的方式交换路由数据。</p>
+<p>BGP 的路由策略有 13 条之多，所以十分复杂。其中最容易理解，最简单的就是 AS_PATH 的概念。AS_PATH 就是自治系统之间的路径。通常而言，路径越短的，肯定越优先选择。</p>
+<p>所以我们来谈谈，Anycast 是如何利用 BGP 实现动态路由到最近的服务器这件事情的。</p>
+<p><img src="https://dn-0x01-io.qbox.me/dns-opendns-miami-s.jpg" alt="OpenDNS"></p>
+<p>一个 Anycast 系统，通常都会申请一个 ASN，也就是一个自治系统编号，也就是自己就是一个自治系统。然后在全球的各个服务器上，运行 BGP 程序。比如上图的 Miami 的服务器，他会和自己附近的自治系统建立 BGP 邻居关系，宣告自己负责的 IP 网段。更新附近 AS 的路由信息。由于 Miami 的服务器，在地理位置上距离最下面的 AS64496 最近，所以他们之间建立了一个直连的 BGP 邻居关系。这样 Miami 的机器和 AS64496 就只有一跳的距离。所以 AS64496 会把请求路由到最近的 Miami 的服务器上去。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a href="https://blog.cloudflare.com/dnssec-an-introduction/" target="_blank" rel="noopener">DNSSEC: An Introduction</a></p>
+<p><a href="http://dyn.com/blog/understanding-dnssec/" target="_blank" rel="noopener">Understanding DNSSEC</a></p>
+<p><a href="http://users.isc.org/~jreed/dnssec-guide/dnssec-guide.html" target="_blank" rel="noopener">BIND DNSSEC Guide</a></p>
+<p><a href="https://www.wikiwand.com/en/List_of_DNS_record_types" target="_blank" rel="noopener">List of DNS record types</a></p>
+<p><a href="https://technet.microsoft.com/en-us/library/cc958958.aspx" target="_blank" rel="noopener">Resource Record Types</a></p>
+<p><a href="https://blog.cloudflare.com/a-brief-anycast-primer/" target="_blank" rel="noopener">A Brief Primer on Anycast</a></p>
+<p><a href="http://ddiguru.com/blog/118-introduction-to-anycast-dns" target="_blank" rel="noopener">Anycast DNS - Part 1, Overview</a></p>
+<p><a href="https://www.pacnog.org/pacnog6/IXP/Anycast-v10.pdf" target="_blank" rel="noopener">Best Practices in<br>IPv4 Anycast Routing</a></p>
+<p><a href="https://labs.opendns.com/2013/01/10/high-availability-with-anycast-routing/" target="_blank" rel="noopener">How OpenDNS achieves high availability with Anycast routing</a></p>
+<p><a href="http://www.ccietea.com/" target="_blank" rel="noopener">http://www.ccietea.com/</a></p>
+
+        </div></article>
+      <article class="post">
+    <header class="post-header">
+      <h1 class="post-title"><a class="post-link" href="/2015/11/07/%E5%8D%8E%E7%A1%95AC66U%E5%85%A5%E6%89%8B%E6%8A%98%E8%85%BE%E8%AE%B0%E5%BD%95/">华硕AC66U入手折腾记录</a>
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2015-11-07
+        </span></div>
+    </header>
+
+    <div class="post-content"><p>吃饱了撑得，想重新买个路由器。个人其实需求不大，支持 2.4/5 GHz，802.11ac，千兆之类的就行了。本来想买个好看的，最喜欢 Google 的 Onhub，但是在国内用，实在是有点蛋疼。其他也没找到颜值能和 Onhub 一拼的。只能退而求其次了。刚好看到京东上，现在华硕 AC66U 只要 599，比上半年降了非常多，于是就入手了。</p>
+<h2 id="开箱"><a href="#开箱" class="headerlink" title="开箱"></a>开箱</h2><p>就不贴什么开箱照了，没什么意思。网上搜搜一大片。</p>
+<h2 id="翻墙"><a href="#翻墙" class="headerlink" title="翻墙"></a>翻墙</h2><p>入手之后，就刷了网上大神集成 Shadowsocks 的梅林固件。详情可见<a href="http://www.chiphell.com/thread-1243565-1-1.html" target="_blank" rel="noopener">这里</a>。</p>
+<p>要配置 Shadowsocks 非常简单，先在系统设置里开启 JFFS2。然后在 Tools 里面，选用智能模式，下面填上 Shadowsocks 的帐号就行。由于固件的问题，shadowsocks 的服务器地址不能使用域名，只能填 IP。应用一下设置，之后就可以愉快的翻墙了。</p>
+<p>简单的做一些说明。代理模式就是在服务器端启动 socks v5 的代理和 HTTP 代理。需要客户端把自己的代理指向这里。HTTP 代理主要的用途是给家里面的 PS4 之类的设备翻墙使用。智能模式就是国外的地址一律走翻墙线路。白名单模式就是指定域名走翻墙线路。</p>
+<p>由于我的 shadowsocks 线路是香港的，网络比较好，所以我用了智能模式。感觉很不错。但是有个问题，我的 telegram 客户端没有走翻墙线路。因为 Telegram 是直接使用 IP 直连的，没有经过域名的国内外判断。所以我还得手工解决这个问题。</p>
+<p>先开启路由器的 SSH 之后，查看一下 iptables。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">maemual@RT-AC66U-3280:&#x2F;tmp&#x2F;home&#x2F;root# iptables -t nat -L</span><br><span class="line">Chain PREROUTING (policy ACCEPT)</span><br><span class="line">target     prot opt source               destination</span><br><span class="line">VSERVER    all  --  anywhere             192.168.1.5</span><br><span class="line">REDIRECT   tcp  --  anywhere             anywhere            set goss dst redir ports 3333</span><br><span class="line">REDIRECT   tcp  --  anywhere             91.108.56.0&#x2F;22      redir ports 3333</span><br><span class="line">REDIRECT   tcp  --  anywhere             91.108.4.0&#x2F;22       redir ports 3333</span><br><span class="line">REDIRECT   tcp  --  anywhere             109.239.140.0&#x2F;24    redir ports 3333</span><br><span class="line">REDIRECT   tcp  --  anywhere             149.154.160.0&#x2F;20    redir ports 3333</span><br></pre></td></tr></table></figure>
+
+<p>其中<code>PREROUTING</code>链的第二条，就是指名 goss 这个 ipset 里面的全部走本地的<code>ss-redir</code>线路。这里为了让 Telegram 翻墙，我们手工加了后面四条规则。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">iptables -t nat -A PREROUTING -p tcp -d 91.108.56.0&#x2F;22 -j REDIRECT --to-ports 3333</span><br><span class="line">iptables -t nat -A PREROUTING -p tcp -d 91.108.4.0&#x2F;22 -j REDIRECT --to-ports 3333</span><br><span class="line">iptables -t nat -A PREROUTING -p tcp -d 109.239.140.0&#x2F;24 -j REDIRECT --to-ports 3333</span><br><span class="line">iptables -t nat -A PREROUTING -p tcp -d 149.154.160.0&#x2F;20 -j REDIRECT --to-ports 3333</span><br></pre></td></tr></table></figure>
+
+<p>但是手工加的规则，路由器一旦重启就会没了，所以我们写个脚本，让启动自动执行。根据梅林固件的<a href="https://github.com/RMerl/asuswrt-merlin/wiki/User-scripts" target="_blank" rel="noopener">官方说明</a>，只有在<code>/jffs/scripts/</code>下面的，指定的几个名字的脚本会被执行。不同名字的脚本会在不同的时候被执行。这里我们需要加的是 NAT 规则，所以建立一个脚本<code>nat-start</code>，把命令放进去。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">#!&#x2F;bin&#x2F;sh</span><br><span class="line">iptables -t nat -A PREROUTING -p tcp -d 91.108.56.0&#x2F;22 -j REDIRECT --to-ports 3333</span><br><span class="line">iptables -t nat -A PREROUTING -p tcp -d 91.108.4.0&#x2F;22 -j REDIRECT --to-ports 3333</span><br><span class="line">iptables -t nat -A PREROUTING -p tcp -d 109.239.140.0&#x2F;24 -j REDIRECT --to-ports 3333</span><br><span class="line">iptables -t nat -A PREROUTING -p tcp -d 149.154.160.0&#x2F;20 -j REDIRECT --to-ports 3333</span><br></pre></td></tr></table></figure>
+
+<p>别忘了<code>chmod a+rx /jffs/scripts/*</code>，设置一下脚本可执行的权限。</p>
+
+        </div></article>
+      <article class="post">
+    <header class="post-header">
+      <h1 class="post-title"><a class="post-link" href="/2015/08/31/%E4%BB%A3%E7%A0%81%E6%95%B4%E6%B4%81%E4%B9%8B%E9%81%93%EF%BC%884%EF%BC%89%EF%BC%9A%E6%A0%BC%E5%BC%8F/">代码整洁之道（4）：格式</a>
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2015-08-31
+        </span></div>
+    </header>
+
+    <div class="post-content"><p>你应该选用一套管理代码格式的简单规则，然后贯彻这些规则。如果在团队工作，则团队应该一致同意采用一套简单的格式规则，所有成员都要遵从。</p>
+<h3 id="格式的目的"><a href="#格式的目的" class="headerlink" title="格式的目的"></a>格式的目的</h3><p>可读性比可用性更重要。</p>
+<h3 id="垂直格式"><a href="#垂直格式" class="headerlink" title="垂直格式"></a>垂直格式</h3><p>短文件通常比长文件易于理解。</p>
+<p>文件名应当简单且一目了然。</p>
+<p>垂直方向上，每组代码行组成的思路，用空白行间隔开。</p>
+<p>紧密相关的代码在垂直方向上也应该靠近。</p>
+<p>自上至下展示函数的调用顺序。</p>
+<h3 id="横向格式"><a href="#横向格式" class="headerlink" title="横向格式"></a>横向格式</h3><p>横向80字符较佳，不反对到达100字符或者120字符。不要再多。</p>
+<p>注意缩进。</p>
+<h3 id="团队规则"><a href="#团队规则" class="headerlink" title="团队规则"></a>团队规则</h3><p>严格遵循团队制定的规则。</p>
+
+        </div></article>
+      <article class="post">
+    <header class="post-header">
+      <h1 class="post-title"><a class="post-link" href="/2015/08/30/%E4%BB%A3%E7%A0%81%E6%95%B4%E6%B4%81%E4%B9%8B%E9%81%93%EF%BC%883%EF%BC%89%EF%BC%9A%E6%B3%A8%E9%87%8A/">代码整洁之道（3）：注释</a>
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2015-08-30
+        </span></div>
+    </header>
+
+    <div class="post-content"><p>注释的恰当用法是弥补我们在用代码表达意图时遭遇的失败。</p>
+<h3 id="注释不能美化糟糕的代码"><a href="#注释不能美化糟糕的代码" class="headerlink" title="注释不能美化糟糕的代码"></a>注释不能美化糟糕的代码</h3><p>带有少量注释的简洁而有表达力的代码，要比带有大量注释的零碎而复杂的代码像样的多。与其花时间编写解释你搞出来的糟糕的代码的注释，不如花时间清洁那堆糟糕的代码。</p>
+<h3 id="用代码来阐述"><a href="#用代码来阐述" class="headerlink" title="用代码来阐述"></a>用代码来阐述</h3><h3 id="好注释"><a href="#好注释" class="headerlink" title="好注释"></a>好注释</h3><p>法律信息。如版权及著作权声明。</p>
+<p>提供信息的注释。更好的方式是尽量利用函数名称传达信息。</p>
+<p>警示信息。</p>
+<p>TODO 注释。</p>
+<p>公共 API 中的 Javadoc。</p>
+<h3 id="坏注释"><a href="#坏注释" class="headerlink" title="坏注释"></a>坏注释</h3><p>喃喃自语。</p>
+<p>多余的注释。相对于代码，并没有提供更多的信息。</p>
+<p>误导性注释。</p>
+<p>循规式注释。不是每个函数、每个变量都要有注释。</p>
+<p>日志式注释。在有了版本控制系统的情况下，这种注释就是废话。</p>
+<p>废话注释。</p>
+<p>能用函数或变量时就不要用注释。</p>
+<p>归属与署名是不必要的。版本控制系统全部记着呢。</p>
+<p>注释掉的代码。千万不要这么干！</p>
+<p>HTML 注释。不要这么写。不够易读。</p>
+<p>信息过多。不要说多余的东西。</p>
+<p>为只做一件事的短函数选个好名字，通常比函数头写注释要好。</p>
+
+        </div></article>
+      <nav class="pagination"><a class="prev" href="/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text">上一页</span>
+      </a>
+    <a class="next" href="/page/3/">
+        <span class="next-text">下一页</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    </nav></section></div></div>
+      </main>
+
+      <footer id="footer" class="footer"><div class="social-links"><a href="mailto:maemual@gmail.com" class="iconfont icon-email" title="email"></a>
+        <a href="https://twitter.com/maemual" target="_blank" rel="noopener" class="iconfont icon-twitter" title="twitter"></a>
+        <a href="https://github.com/maemual" target="_blank" rel="noopener" class="iconfont icon-github" title="github"></a>
+        <a href="https://www.zhihu.com/people/maemual" target="_blank" rel="noopener" class="iconfont icon-zhihu" title="zhihu"></a>
+        <a href="https://www.douban.com/people/maemual/" target="_blank" rel="noopener" class="iconfont icon-douban" title="douban"></a>
+        <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    </div><div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even" target="_blank" rel="noopener">Even</a>
+  </span>
+
+  <span class="copyright-year">&copy;2014 - 2020<span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">maemual</span>
+  </span>
+</div>
+</footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div><script type="text/javascript" src="/lib/jquery/jquery.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/src/even.js?v=2.11.0"></script>
+</body>
+</html>

@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="description" content="CentOS7配置DNS服务"/><meta name="keywords" content="sa, 0x01" /><meta name="google-site-verification" content="1XE4HjcRwxfqFivnUCvu3UNFTTG4dg7dvjgCPwcrxGg" /><link rel="alternate" href="/atom.xml" title="0x01"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.11.0" />
+<link rel="canonical" href="https://0x01.io/2015/06/03/CentOS7配置DNS服务/"/>
+
+<link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css" />
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.11.0" />
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-74494566-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-74494566-1');
+</script><script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+<script>
+  window.config = {"leancloud":{"app_id":null,"app_key":null},"toc":true,"fancybox":true,"pjax":"","latex":false};
+</script>
+
+    <title>CentOS7配置DNS服务 - 0x01</title>
+  <meta name="generator" content="Hexo 4.2.0"><link rel="alternate" href="/atom.xml" title="0x01" type="application/atom+xml">
+</head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">0x01</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list"><a href="/">
+        <li class="mobile-menu-item">首页
+          </li>
+      </a><a href="/archives/">
+        <li class="mobile-menu-item">归档
+          </li>
+      </a></ul>
+</nav>
+<div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">0x01</a>
+</div>
+
+<nav class="site-navbar"><ul id="menu" class="menu"><li class="menu-item">
+          <a class="menu-item-link" href="/">
+            首页
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            归档
+            </a>
+        </li>
+      </ul></nav>
+</header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content"><article class="post">
+    <header class="post-header">
+      <h1 class="post-title">CentOS7配置DNS服务
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2015-06-03
+        </span></div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#需求"><span class="toc-text">需求</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#背景假设"><span class="toc-text">背景假设</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装软件"><span class="toc-text">安装软件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#配置主-DNS-服务器"><span class="toc-text">配置主 DNS 服务器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#修改自定义配置"><span class="toc-text">修改自定义配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#填写自定义规则"><span class="toc-text">填写自定义规则</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#填写反向自定义规则"><span class="toc-text">填写反向自定义规则</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#检查配置文件"><span class="toc-text">检查配置文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#启动"><span class="toc-text">启动</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#客户端"><span class="toc-text">客户端</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-text">参考文章</span></a></li></ol>
+    </div>
+  </div><div class="post-content"><h2 id="需求"><a href="#需求" class="headerlink" title="需求"></a>需求</h2><p>内网的服务越来越多，记 IP 地址太烦。</p>
+<p>局域网内可以通过域名访问内网的服务，并且可以通外网</p>
+<h2 id="背景假设"><a href="#背景假设" class="headerlink" title="背景假设"></a>背景假设</h2><p>DNS 所在的服务器的 IP 是<code>192.168.1.1</code>，内网的机器是<code>192.168.2.1</code>，需要分配域名<code>host1.in.example.com</code>；另一个内网机器<code>192.168.3.1</code>，需要分配域名<code>host2.in.example.com</code>。</p>
+<p>一般情况下，都是配置主、从两个 DNS 服务器的，方式挂掉影响服务。但是由于我比较懒，所以只配置了一个主服务器。如果需要配置从服务器，可以看参考文章，和主服务器配置方法基本相同。</p>
+<a id="more"></a>
+
+<h2 id="安装软件"><a href="#安装软件" class="headerlink" title="安装软件"></a>安装软件</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install bind bind-utils</span><br></pre></td></tr></table></figure>
+
+<h2 id="配置主-DNS-服务器"><a href="#配置主-DNS-服务器" class="headerlink" title="配置主 DNS 服务器"></a>配置主 DNS 服务器</h2><p>编辑<code>named.conf</code>配置文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vi &#x2F;etc&#x2F;named.conf</span><br></pre></td></tr></table></figure>
+
+<p>在其中添加信任的网段</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">acl &quot;trusted&quot; &#123;</span><br><span class="line">        192.168.0.0&#x2F;16;  # 也可以填单独的 IP 地址</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>修改<code>options</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">options &#123;</span><br><span class="line">        listen-on port 53 &#123; 127.0.0.1; 192.168.1.1; &#125;;  # 填上本地的 IP 地址</span><br><span class="line">        listen-on-v6 port 53 &#123; ::1; &#125;;  # 可选</span><br><span class="line">        directory       &quot;&#x2F;var&#x2F;named&quot;;</span><br><span class="line">        dump-file       &quot;&#x2F;var&#x2F;named&#x2F;data&#x2F;cache_dump.db&quot;;</span><br><span class="line">        statistics-file &quot;&#x2F;var&#x2F;named&#x2F;data&#x2F;named_stats.txt&quot;;</span><br><span class="line">        memstatistics-file &quot;&#x2F;var&#x2F;named&#x2F;data&#x2F;named_mem_stats.txt&quot;;</span><br><span class="line">        allow-query     &#123; trusted; &#125;;  # 把刚才的信任段放这</span><br><span class="line">        forwarders      &#123; 202.119.80.10; &#125;;  # 这儿写你上游的 DNS 服务器地址</span><br><span class="line"></span><br><span class="line">        .....  # 省略，默认值</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>然后在配置的最后添加</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">include &quot;&#x2F;etc&#x2F;named&#x2F;named.conf.local&quot;;</span><br></pre></td></tr></table></figure>
+
+<h3 id="修改自定义配置"><a href="#修改自定义配置" class="headerlink" title="修改自定义配置"></a>修改自定义配置</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vi &#x2F;etc&#x2F;named&#x2F;named.conf.local</span><br></pre></td></tr></table></figure>
+
+<p>写入自己的域</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">zone &quot;in.example.com&quot; &#123;</span><br><span class="line">    type master;</span><br><span class="line">    file &quot;&#x2F;etc&#x2F;named&#x2F;zones&#x2F;db.in.example.com&quot;; # zone file path</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>同时写入反向解析域</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">zone &quot;168.192.in-addr.arpa&quot; &#123;</span><br><span class="line">    type master;</span><br><span class="line">    file &quot;&#x2F;etc&#x2F;named&#x2F;zones&#x2F;db.192.168&quot;;  # 192.168.0.0&#x2F;16 subnet</span><br><span class="line">    &#125;;</span><br></pre></td></tr></table></figure>
+
+<p>改完之后修改一下文件的权限</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo chmod 755 &#x2F;etc&#x2F;named</span><br><span class="line">sudo mkdir &#x2F;etc&#x2F;named&#x2F;zones</span><br></pre></td></tr></table></figure>
+
+<h3 id="填写自定义规则"><a href="#填写自定义规则" class="headerlink" title="填写自定义规则"></a>填写自定义规则</h3><p>修改自定义规则</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vi &#x2F;etc&#x2F;named&#x2F;zones&#x2F;db.in.example.com</span><br></pre></td></tr></table></figure>
+
+<p>首先写入 SOA 记录。尽管我也不懂这是什么意思。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">@       IN      SOA     ns1.in.example.com. admin.in.example.com. (</span><br><span class="line">                              3         ; Serial</span><br><span class="line">             604800     ; Refresh</span><br><span class="line">              86400     ; Retry</span><br><span class="line">            2419200     ; Expire</span><br><span class="line">             604800 )   ; Negative Cache TTL</span><br></pre></td></tr></table></figure>
+
+<p>数字不用改，把对应域名改掉就行了</p>
+<p>然后写入 NS 记录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">; name servers - NS records</span><br><span class="line">    IN      NS      ns1.in.example.com.</span><br></pre></td></tr></table></figure>
+
+<p>接下来就是自定义的 A 记录了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">; name servers - A records</span><br><span class="line">ns1.in.example.com.          IN      A       192.168.1.1</span><br><span class="line"></span><br><span class="line">; 192.168.0.0&#x2F;16 - A records</span><br><span class="line">host1.in.example.com.        IN      A      192.168.2.1</span><br><span class="line">host2.in.example.com.        IN      A      192.168.3.1</span><br></pre></td></tr></table></figure>
+
+<h3 id="填写反向自定义规则"><a href="#填写反向自定义规则" class="headerlink" title="填写反向自定义规则"></a>填写反向自定义规则</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vi &#x2F;etc&#x2F;named&#x2F;zones&#x2F;db.192.168</span><br></pre></td></tr></table></figure>
+
+<p>同样写入不知道干什么用的 SOA 记录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">@       IN      SOA     ns1.in.example.com. admin.in.example.com. (</span><br><span class="line">                              3         ; Serial</span><br><span class="line">                         604800         ; Refresh</span><br><span class="line">                          86400         ; Retry</span><br><span class="line">                        2419200         ; Expire</span><br><span class="line">                         604800 )       ; Negative Cache TTL</span><br></pre></td></tr></table></figure>
+
+<p>和 NS 记录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">; name servers - NS records</span><br><span class="line">      IN      NS      ns1.in.example.com.</span><br></pre></td></tr></table></figure>
+
+<p>然后把自定义的记录的反向记录写入</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">; PTR Records</span><br><span class="line">1.1   IN      PTR     ns1.in.example.com.    ; 192.168.1.1</span><br><span class="line">1.2   IN      PTR     host1.in.example.com.  ; 192.168.2.1</span><br><span class="line">1.3   IN      PTR     host2.in.example.com.  ; 192.168.3.1  注意最前面的顺序，是反向的</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="检查配置文件"><a href="#检查配置文件" class="headerlink" title="检查配置文件"></a>检查配置文件</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo named-checkconf</span><br></pre></td></tr></table></figure>
+
+<p>用上面检查各种<code>.conf</code>文件的正确性</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo named-checkzone in.example.com &#x2F;etc&#x2F;named&#x2F;zones&#x2F;db.in.example.com</span><br></pre></td></tr></table></figure>
+
+<p>检查正向规则的正确性</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo named-checkzone 168.192.in-addr.arpa &#x2F;etc&#x2F;named&#x2F;zones&#x2F;db.192.168</span><br></pre></td></tr></table></figure>
+
+<p>检查反向规则的正确性</p>
+<h2 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h2><p>如果以上规则检查没有问题的话，就可以启动 DNS 服务了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl start named</span><br></pre></td></tr></table></figure>
+
+<p>设置开机自启动</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl enable named</span><br></pre></td></tr></table></figure>
+
+<p>此时，你的 DNS 服务已经 OK</p>
+<h2 id="客户端"><a href="#客户端" class="headerlink" title="客户端"></a>客户端</h2><p>接下来需要修改你的客户端。</p>
+<p>比如 DHCP 分配的 DNS 地址</p>
+<p>比如 CentOS 自己的。可以直接修改<code>/etc/resolv.conf</code>以生效</p>
+<p>对于 Ubuntu，如果是通过自动获取 IP 的话，通过<code>sudo resolvconf -u</code>即可更新</p>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p><a href="https://www.digitalocean.com/community/tutorials/how-to-configure-bind-as-a-private-network-dns-server-on-centos-7" target="_blank" rel="noopener">How To Configure BIND as a Private Network DNS Server on CentOS 7</a></p>
+
+      </div>
+      
+      <footer class="post-footer">
+        <div class="post-tags">
+            <a href="/tags/sa/">sa</a>
+            </div>
+        
+        <nav class="post-nav"><a class="prev" href="/2015/08/22/hexo%E5%8D%9A%E5%AE%A2%E7%8B%AC%E7%AB%8B%E9%83%A8%E7%BD%B2%E6%95%99%E7%A8%8B/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">hexo博客独立部署教程</span>
+        <span class="prev-text nav-mobile">上一篇</span>
+      </a>
+    <a class="next" href="/2015/05/17/%E7%BF%BB%E5%A2%99%E5%A7%BF%E5%8A%BF%E6%80%BB%E7%BB%93/">
+        <span class="next-text nav-default">翻墙姿势总结</span>
+        <span class="prev-text nav-mobile">下一篇</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    </nav></footer>
+    </article></div><div class="comments" id="comments"><div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript" target="_blank" rel="noopener">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div></div>
+      </main>
+
+      <footer id="footer" class="footer"><div class="social-links"><a href="mailto:maemual@gmail.com" class="iconfont icon-email" title="email"></a>
+        <a href="https://twitter.com/maemual" target="_blank" rel="noopener" class="iconfont icon-twitter" title="twitter"></a>
+        <a href="https://github.com/maemual" target="_blank" rel="noopener" class="iconfont icon-github" title="github"></a>
+        <a href="https://www.zhihu.com/people/maemual" target="_blank" rel="noopener" class="iconfont icon-zhihu" title="zhihu"></a>
+        <a href="https://www.douban.com/people/maemual/" target="_blank" rel="noopener" class="iconfont icon-douban" title="douban"></a>
+        <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    </div><div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even" target="_blank" rel="noopener">Even</a>
+  </span>
+
+  <span class="copyright-year">&copy;2014 - 2020<span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">maemual</span>
+  </span>
+</div>
+</footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div><script type="text/javascript">
+    var disqus_config = function () {
+        this.page.url = 'https://0x01.io/2015/06/03/CentOS7%E9%85%8D%E7%BD%AEDNS%E6%9C%8D%E5%8A%A1/';
+        this.page.identifier = '2015/06/03/CentOS7配置DNS服务/';
+        this.page.title = 'CentOS7配置DNS服务';
+    };
+    (function() {
+    var d = document, s = d.createElement('script');
+
+    s.src = '//0x01-io.disqus.com/embed.js';
+
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();  
+  </script><script type="text/javascript" src="/lib/jquery/jquery.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/src/even.js?v=2.11.0"></script>
+</body>
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="description" content="Crypto101 阅读笔记（1）"/><meta name="keywords" content="Crypto, 密码学, 现代密码学, 阅读笔记, xor, 异或, block cipher, 0x01" /><meta name="google-site-verification" content="1XE4HjcRwxfqFivnUCvu3UNFTTG4dg7dvjgCPwcrxGg" /><link rel="alternate" href="/atom.xml" title="0x01"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.11.0" />
+<link rel="canonical" href="https://0x01.io/2016/03/04/Crypto101-阅读笔记（1）/"/>
+
+<link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css" />
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.11.0" />
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-74494566-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-74494566-1');
+</script><script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+<script>
+  window.config = {"leancloud":{"app_id":null,"app_key":null},"toc":true,"fancybox":true,"pjax":"","latex":false};
+</script>
+
+    <title>Crypto101 阅读笔记（1） - 0x01</title>
+  <meta name="generator" content="Hexo 4.2.0"><link rel="alternate" href="/atom.xml" title="0x01" type="application/atom+xml">
+</head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">0x01</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list"><a href="/">
+        <li class="mobile-menu-item">首页
+          </li>
+      </a><a href="/archives/">
+        <li class="mobile-menu-item">归档
+          </li>
+      </a></ul>
+</nav>
+<div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">0x01</a>
+</div>
+
+<nav class="site-navbar"><ul id="menu" class="menu"><li class="menu-item">
+          <a class="menu-item-link" href="/">
+            首页
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            归档
+            </a>
+        </li>
+      </ul></nav>
+</header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content"><article class="post">
+    <header class="post-header">
+      <h1 class="post-title">Crypto101 阅读笔记（1）
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2016-03-04
+        </span></div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#异或"><span class="toc-text">异或</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#块加密"><span class="toc-text">块加密</span></a></li></ol>
+    </div>
+  </div><div class="post-content"><p>Crypto101 是作为非数学专业，入门现代密码学不错的学习资料。本阅读笔记系列主要以一个程序员的视角来看待现代密码学。Crypto101 原文可以从官网下载到 <a href="https://www.crypto101.io/" target="_blank" rel="noopener">www.crypto101.io</a>。</p>
+<h2 id="异或"><a href="#异或" class="headerlink" title="异或"></a>异或</h2><p>异或$\oplus$操作是密码学中非常重要的一个运算。</p>
+<p>基本运算规则如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">0⊕0&#x3D;0 </span><br><span class="line">1⊕0&#x3D;1 </span><br><span class="line">0⊕1&#x3D;1 </span><br><span class="line">1⊕1&#x3D;0</span><br></pre></td></tr></table></figure>
+
+<p>通过以上可以推出一些常用的其他规律：</p>
+<ol>
+<li>异或运算可以任何顺序 $a \oplus b = b \oplus a$，即交换律</li>
+<li>自己异或自己都是 0</li>
+<li>任何比特异或 0 的结果都还是自己</li>
+</ol>
+<p>通过上述规律，可以推导出 $a \oplus b \oplus a = b$。通过这个原则，可以认为 a 异或 b 是加密过程，再异或 a 就是解密过程。</p>
+<p>完美的加密模式是，明文的每个比特都和一个真随机的比特 key 进行异或。但是这样缺点也很明显，key 会和明文一样长。</p>
+<h2 id="块加密"><a href="#块加密" class="headerlink" title="块加密"></a>块加密</h2><p>块加密（Block Cipher）即分组加密算法，允许对固定长度的块进行加密。</p>
+<p>它使用加密函数 E，通过密钥 k 可以使得明文 P 变成密文 C：</p>
+<p>$$ C = E(k, P) $$</p>
+<p>明文和密文都是字节序列，这两者通常都拥有相同的长度，并且是被块加密算法规定好的一个长度，叫做块大小（block size）。所有可能的 key 被称为 keyspace，即键空间。</p>
+<p>解密的过程相反，使用解密函数 D，通过和上面加密时一样的密钥 k 和密文 C，可以获得明文 P：</p>
+<p>$$ P = D(k, C) $$</p>
+<p>目前最常用的块加密算法是 AES。</p>
+
+      </div>
+      
+      <footer class="post-footer">
+        <div class="post-tags">
+            <a href="/tags/Crypto/">Crypto</a>
+            <a href="/tags/%E5%AF%86%E7%A0%81%E5%AD%A6/">密码学</a>
+            <a href="/tags/%E7%8E%B0%E4%BB%A3%E5%AF%86%E7%A0%81%E5%AD%A6/">现代密码学</a>
+            <a href="/tags/%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/">阅读笔记</a>
+            <a href="/tags/xor/">xor</a>
+            <a href="/tags/%E5%BC%82%E6%88%96/">异或</a>
+            <a href="/tags/block-cipher/">block cipher</a>
+            </div>
+        
+        <nav class="post-nav"><a class="prev" href="/2016/03/05/Crypto101-%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0%EF%BC%882%EF%BC%89/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">Crypto101 阅读笔记（2）</span>
+        <span class="prev-text nav-mobile">上一篇</span>
+      </a>
+    <a class="next" href="/2016/02/28/shadowsocks-%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/">
+        <span class="next-text nav-default">shadowsocks 源码阅读</span>
+        <span class="prev-text nav-mobile">下一篇</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    </nav></footer>
+    </article></div><div class="comments" id="comments"><div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript" target="_blank" rel="noopener">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div></div>
+      </main>
+
+      <footer id="footer" class="footer"><div class="social-links"><a href="mailto:maemual@gmail.com" class="iconfont icon-email" title="email"></a>
+        <a href="https://twitter.com/maemual" target="_blank" rel="noopener" class="iconfont icon-twitter" title="twitter"></a>
+        <a href="https://github.com/maemual" target="_blank" rel="noopener" class="iconfont icon-github" title="github"></a>
+        <a href="https://www.zhihu.com/people/maemual" target="_blank" rel="noopener" class="iconfont icon-zhihu" title="zhihu"></a>
+        <a href="https://www.douban.com/people/maemual/" target="_blank" rel="noopener" class="iconfont icon-douban" title="douban"></a>
+        <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    </div><div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even" target="_blank" rel="noopener">Even</a>
+  </span>
+
+  <span class="copyright-year">&copy;2014 - 2020<span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">maemual</span>
+  </span>
+</div>
+</footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div><script type="text/javascript">
+    var disqus_config = function () {
+        this.page.url = 'https://0x01.io/2016/03/04/Crypto101-%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0%EF%BC%881%EF%BC%89/';
+        this.page.identifier = '2016/03/04/Crypto101-阅读笔记（1）/';
+        this.page.title = 'Crypto101 阅读笔记（1）';
+    };
+    (function() {
+    var d = document, s = d.createElement('script');
+
+    s.src = '//0x01-io.disqus.com/embed.js';
+
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();  
+  </script><script type="text/javascript" src="/lib/jquery/jquery.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/src/even.js?v=2.11.0"></script>
+</body>
+</html>
